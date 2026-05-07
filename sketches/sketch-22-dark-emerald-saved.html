@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sketch 22 — Dark — Tab Nav, Saved Gallery, Emerald</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#08140e;--s:#0e1e18;--s2:#142a20;--bdr:#1e4430;--tx:#d8f0e4;--mut:#70b890;--acc:#34d399;--acc2:#10b981;--adim:rgba(52,211,153,0.12);--radius:12px;--font:'Inter',sans-serif;--display:'Playfair Display',Georgia,serif}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);line-height:1.6;min-height:100vh}
+h1,h2,h3{font-family:var(--display)}
+h1{color:var(--acc);font-size:1.8rem}
+.subtitle{color:var(--mut);margin-top:0.25rem}
+.view-header{margin-bottom:1.5rem}
+a{text-decoration:none;color:var(--mut)}
+
+.tab-bar{display:flex;gap:0;background:var(--s);border-bottom:1px solid var(--bdr);overflow-x:auto;position:sticky;top:0;z-index:100}
+.tab{padding:0.6rem 1.2rem;border:none;background:none;font-family:var(--font);font-size:0.85rem;color:var(--mut);cursor:pointer;border-bottom:2px solid transparent;transition:0.2s}
+.tab:hover,.tab.active{color:var(--acc);border-bottom-color:var(--acc);background:var(--adim)}
+
+.btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem;border:none;border-radius:8px;font-family:var(--font);font-size:0.85rem;font-weight:500;cursor:pointer;transition:0.2s}
+.btn-primary{background:var(--acc2);color:white}
+.btn-primary:hover{background:var(--acc);box-shadow:0 4px 12px var(--adim)}
+.btn-back{background:var(--s);color:var(--mut);border:1px solid var(--bdr);margin-bottom:1rem}
+.btn-save{background:var(--s);color:var(--acc);border:1px solid var(--acc);margin-top:1rem}
+.btn-accept{background:var(--acc2);color:white;font-size:0.8rem;padding:0.3rem 0.8rem}
+.btn-skip{background:none;color:var(--mut);border:1px solid var(--bdr);font-size:0.8rem;padding:0.3rem 0.8rem}
+.btn-success{background:var(--acc2);color:white}
+.btn-outline{background:none;color:var(--mut);border:1px solid var(--bdr)}
+.btn-send{background:var(--acc2);color:white;padding:0.5rem 0.8rem}
+.btn-danger{background:#dc2626;color:white}
+
+.saved-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
+.saved-card{background:var(--s);border-radius:var(--radius);padding:1.25rem;border:1px solid var(--bdr);transition:0.2s}
+.saved-card:hover{border-color:var(--acc)}
+.saved-card h3{font-size:1rem;margin-bottom:0.4rem}
+.saved-meta{display:flex;gap:1rem;font-size:0.82rem;color:var(--mut)}
+.saved-badge{display:inline-block;margin-top:0.5rem;padding:0.15rem 0.5rem;border-radius:6px;font-size:0.72rem;font-weight:600}
+.saved-badge.eco{background:var(--adim);color:var(--acc)}
+.saved-empty-hint{grid-column:1/-1;text-align:center;color:var(--mut);padding:2rem;background:var(--s);border-radius:var(--radius);border:2px dashed var(--bdr)}
+
+main{max-width:1200px;margin:0 auto;padding:2rem;}
+    </style>
+</head>
+<body>
+<div class="tab-bar"><button class="tab">Meal Planner</button><button class="tab">Recipe Detail</button><button class="tab">AI Assistant</button><button class="tab active">My Recipes</button><button class="tab">My Impact</button><button class="tab">Settings</button></div>
+<main>
+<div class="view-header"><h1>My Recipes</h1><p class="subtitle">Your saved and modified recipes.</p></div>
+<div class="saved-grid">
+<div class="saved-card"><h3>Green Bolognese (Modified)</h3><div class="saved-meta"><span>🌿 1.02 kg CO₂e</span><span>Saved 2.70 kg</span></div><div class="saved-badge eco">75% less CO₂</div></div>
+<div class="saved-card"><h3>Chicken Stir-Fry</h3><div class="saved-meta"><span>🌿 1.35 kg CO₂e</span><span>Original</span></div></div>
+<div class="saved-card"><h3>Veggie Lentil Soup</h3><div class="saved-meta"><span>🌿 0.21 kg CO₂e</span><span>Already eco ✓</span></div><div class="saved-badge eco">Eco-friendly</div></div>
+<div class="saved-empty-hint"><p>📖 Save more recipes from the Meal Planner to see them here!</p></div></div>
+</main>
+</body>
+</html>

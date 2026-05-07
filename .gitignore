@@ -1,0 +1,23 @@
+# Secrets / config
+config.js
+.env
+key
+
+# Dependencies
+node_modules/
+server/node_modules/
+
+# Server runtime data
+server/uploads/
+server/users.db
+server/users.db-wal
+server/users.db-shm
+
+# Build / deploy artifacts
+*.zip
+azure-logs/
+.deployment
+
+# OS / editor
+.DS_Store
+Thumbs.db

@@ -1,0 +1,12 @@
+{
+  "name": "eco-nudge-app",
+  "version": "1.0.0",
+  "description": "Eco-Nudge Sustainable Meal Planner with Eye-Tracking Research",
+  "scripts": {
+    "start": "node server/server.js",
+    "install": "cd server && npm install --production"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

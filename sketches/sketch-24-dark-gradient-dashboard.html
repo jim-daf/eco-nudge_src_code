@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sketch 24 — Dark — Top Nav, Full Dashboard, Gradient</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f0f1a;--s:#1a1a2e;--s2:#242442;--bdr:#363660;--tx:#e8e0f8;--mut:#a090c0;--acc:#818cf8;--acc2:#6366f1;--adim:rgba(129,140,248,0.12);--radius:12px;--font:'Inter',sans-serif;--display:'Playfair Display',Georgia,serif}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);line-height:1.6;min-height:100vh}
+h1,h2,h3{font-family:var(--display)}
+h1{color:var(--acc);font-size:1.8rem}
+.subtitle{color:var(--mut);margin-top:0.25rem}
+.view-header{margin-bottom:1.5rem}
+a{text-decoration:none;color:var(--mut)}
+
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:0.6rem 1.5rem;background:var(--s);border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:0.4rem}
+.brand-icon{font-size:1.4rem}
+.brand-name{font-family:var(--display);font-size:1.15rem;font-weight:700;color:var(--acc)}
+.nav-links{display:flex;gap:0.2rem}
+.nav-link{padding:0.4rem 0.8rem;border-radius:8px;font-size:0.85rem;font-weight:500;transition:0.2s}
+.nav-link:hover,.nav-link.active{background:var(--adim);color:var(--acc)}
+.streak{background:var(--adim);padding:0.3rem 0.65rem;border-radius:20px;font-size:0.8rem;font-weight:600;color:var(--acc)}
+
+.btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem;border:none;border-radius:8px;font-family:var(--font);font-size:0.85rem;font-weight:500;cursor:pointer;transition:0.2s}
+.btn-primary{background:var(--acc2);color:white}
+.btn-primary:hover{background:var(--acc);box-shadow:0 4px 12px var(--adim)}
+.btn-back{background:var(--s);color:var(--mut);border:1px solid var(--bdr);margin-bottom:1rem}
+.btn-save{background:var(--s);color:var(--acc);border:1px solid var(--acc);margin-top:1rem}
+.btn-accept{background:var(--acc2);color:white;font-size:0.8rem;padding:0.3rem 0.8rem}
+.btn-skip{background:none;color:var(--mut);border:1px solid var(--bdr);font-size:0.8rem;padding:0.3rem 0.8rem}
+.btn-success{background:var(--acc2);color:white}
+.btn-outline{background:none;color:var(--mut);border:1px solid var(--bdr)}
+.btn-send{background:var(--acc2);color:white;padding:0.5rem 0.8rem}
+.btn-danger{background:#dc2626;color:white}
+
+.impact-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.impact-card{background:var(--s);border-radius:var(--radius);padding:1.25rem;text-align:center;border:1px solid var(--bdr);transition:0.2s}
+.impact-card.highlight{border-color:var(--acc);background:var(--adim)}
+.impact-icon{font-size:1.8rem;margin-bottom:0.4rem}
+.impact-value{font-size:1.8rem;font-weight:700;color:var(--acc)}
+.impact-label{font-size:0.82rem;color:var(--mut)}
+.impact-equiv{font-size:0.78rem;color:var(--acc);margin-top:0.3rem}
+.impact-history{background:var(--s);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.5rem;border:1px solid var(--bdr)}
+.impact-history h3{margin-bottom:0.8rem}
+.history-item{display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--bdr);font-size:0.85rem}
+.history-item .save{color:var(--acc);font-weight:600}
+.impact-chart{background:var(--s);border-radius:var(--radius);padding:1.25rem;border:1px solid var(--bdr)}
+.impact-chart h3{margin-bottom:1rem}
+.chart-bars{display:flex;justify-content:space-around;align-items:flex-end;height:140px}
+.bar-wrap{display:flex;flex-direction:column;align-items:center;gap:0.3rem;width:40px}
+.bar{width:28px;background:var(--acc);border-radius:4px 4px 0 0;min-height:4px}
+.bar-wrap span{font-size:0.72rem;color:var(--mut)}
+.recipe-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-bottom:1.5rem}
+.recipe-card{background:var(--s);border-radius:var(--radius);border:1px solid var(--bdr);overflow:hidden;transition:0.2s}
+.recipe-card:hover{border-color:var(--acc);transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,0.2)}
+.card-body{padding:1rem}
+.card-body h3{font-size:1rem;margin-bottom:0.4rem}
+.card-meta{display:flex;gap:0.8rem;color:var(--mut);font-size:0.8rem;margin-bottom:0.5rem}
+.card-ingredients{font-size:0.82rem;color:var(--mut);line-height:1.5}
+.card-footer{margin-top:0.8rem;padding-top:0.6rem;border-top:1px solid var(--bdr);display:flex;justify-content:space-between;font-size:0.8rem}
+.co2-mini{color:var(--mut)}
+.swaps{color:var(--acc);font-weight:600}
+.custom-card{background:var(--s);border-radius:var(--radius);padding:1.5rem;border:2px dashed var(--bdr);margin-top:1rem}
+.custom-card h3{margin-bottom:0.8rem}
+.form-group{margin-bottom:0.8rem}
+.form-group label{display:block;font-size:0.82rem;font-weight:600;color:var(--mut);margin-bottom:0.25rem}
+.form-group input,.form-group textarea{width:100%;padding:0.5rem 0.7rem;border:1.5px solid var(--bdr);border-radius:8px;font-family:var(--font);font-size:0.85rem;color:var(--tx);background:var(--s2);transition:0.2s}
+.form-group input:focus,.form-group textarea:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px var(--adim)}
+.chat-container{max-width:800px;margin:0 auto}
+.chat-header{display:flex;align-items:center;gap:1rem;padding:1rem;background:var(--s);border-radius:var(--radius);border:1px solid var(--bdr);margin-bottom:1rem}
+.assistant-avatar{font-size:2rem}
+.chat-header h2{font-size:1.2rem;color:var(--acc)}
+.assistant-status{font-size:0.82rem;color:var(--mut)}
+.chat-messages-main{display:flex;flex-direction:column;gap:0.8rem;margin-bottom:1rem;min-height:300px}
+.chat-message{display:flex;gap:0.8rem;align-items:flex-start}
+.chat-message.user{flex-direction:row-reverse}
+.message-avatar{font-size:1.4rem}
+.message-content{background:var(--s);border-radius:var(--radius);padding:1rem;border:1px solid var(--bdr);max-width:80%;font-size:0.9rem}
+.chat-message.user .message-content{background:var(--adim);border-color:var(--acc)}
+.message-content ul{margin:0.5rem 0 0 1.2rem;font-size:0.85rem}
+.message-content li{margin-bottom:0.3rem}
+.quick-prompts{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.8rem}
+.qp-btn{background:var(--s);border:1px solid var(--bdr);border-radius:20px;padding:0.4rem 0.8rem;font-family:var(--font);font-size:0.8rem;color:var(--mut);cursor:pointer;transition:0.2s}
+.qp-btn:hover{border-color:var(--acc);color:var(--acc)}
+.main-chat-input{display:flex;gap:0.4rem}
+.main-chat-input input{flex:1;padding:0.6rem 1rem;border:1.5px solid var(--bdr);border-radius:var(--radius);background:var(--s);color:var(--tx);font-family:var(--font);font-size:0.9rem}
+.main-chat-input input:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px var(--adim)}
+.dash-row{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1.5rem}
+.dash-half{min-width:0}
+
+main{max-width:1200px;margin:0 auto;padding:2rem;}
+    </style>
+</head>
+<body>
+<nav class="top-nav">
+  <div class="brand"><span class="brand-icon">🌿</span><span class="brand-name">Eco-Nudge</span></div>
+  <div class="nav-links"><a href="#" class="nav-link">Meal Planner</a><a href="#" class="nav-link">Recipe Detail</a><a href="#" class="nav-link">AI Assistant</a><a href="#" class="nav-link">My Recipes</a><a href="#" class="nav-link active">My Impact</a><a href="#" class="nav-link">Settings</a></div>
+  <span class="streak">🔥 3</span>
+</nav>
+<main>
+<div class="view-header"><h1>Your Eco Impact</h1><p class="subtitle">Track your sustainable choices.</p></div>
+<div class="impact-stats-grid">
+<div class="impact-card highlight"><div class="impact-icon">🌍</div><div class="impact-value">12.40</div><div class="impact-label">kg CO₂ saved</div><div class="impact-equiv">≈ 50 km of driving</div></div>
+<div class="impact-card"><div class="impact-icon">🥗</div><div class="impact-value">8</div><div class="impact-label">Meals optimized</div></div>
+<div class="impact-card"><div class="impact-icon">🔄</div><div class="impact-value">14</div><div class="impact-label">Ingredient swaps</div></div>
+<div class="impact-card"><div class="impact-icon">🔥</div><div class="impact-value">5</div><div class="impact-label">Day streak</div></div>
+</div>
+<div class="impact-history"><h3>Recent Activity</h3>
+<div class="history-item"><span>🔄 Swapped beef → lentils in Bolognese</span><span class="save">−2.70 kg CO₂</span></div>
+<div class="history-item"><span>🔄 Swapped cream → coconut milk in Curry</span><span class="save">−0.80 kg CO₂</span></div>
+<div class="history-item"><span>✅ Saved Veggie Lentil Soup</span><span class="save">Already eco ✓</span></div></div>
+<div class="impact-chart"><h3>Weekly Carbon Savings</h3>
+<div class="chart-bars">
+<div class="bar-wrap"><div class="bar" style="height:30%"></div><span>Mon</span></div>
+<div class="bar-wrap"><div class="bar" style="height:60%"></div><span>Tue</span></div>
+<div class="bar-wrap"><div class="bar" style="height:45%"></div><span>Wed</span></div>
+<div class="bar-wrap"><div class="bar" style="height:80%"></div><span>Thu</span></div>
+<div class="bar-wrap"><div class="bar" style="height:20%"></div><span>Fri</span></div>
+<div class="bar-wrap"><div class="bar" style="height:50%"></div><span>Sat</span></div>
+<div class="bar-wrap"><div class="bar" style="height:70%"></div><span>Sun</span></div>
+</div></div>
+<div class="dash-row">
+<div class="dash-half"><div class="view-header"><h1>Meal Planner</h1><p class="subtitle">Browse recipes or add your own. We'll help you make eco-friendly choices.</p></div>
+<div class="recipe-grid"><div class="recipe-card"><div class="card-body"><h3>Classic Beef Bolognese</h3>
+<div class="card-meta"><span>🍽️ 4</span><span>⏱️ 45 min</span><span>🌍 Italian</span></div>
+<div class="card-ingredients">beef, tomatoes, pasta, cheese</div>
+<div class="card-footer"><span class="co2-mini">🌿 4.02 kg CO₂e/serving</span><span class="swaps">2 swaps</span></div></div></div><div class="recipe-card"><div class="card-body"><h3>Chicken Stir-Fry</h3>
+<div class="card-meta"><span>🍽️ 3</span><span>⏱️ 25 min</span><span>🌍 Asian</span></div>
+<div class="card-ingredients">chicken, rice, broccoli, peppers</div>
+<div class="card-footer"><span class="co2-mini">🌿 1.35 kg CO₂e/serving</span><span class="swaps">2 swaps</span></div></div></div><div class="recipe-card"><div class="card-body"><h3>Lamb Curry</h3>
+<div class="card-meta"><span>🍽️ 4</span><span>⏱️ 60 min</span><span>🌍 Indian</span></div>
+<div class="card-ingredients">lamb, onions, tomatoes, cream, rice</div>
+<div class="card-footer"><span class="co2-mini">🌿 3.72 kg CO₂e/serving</span><span class="swaps">3 swaps</span></div></div></div><div class="recipe-card"><div class="card-body"><h3>Salmon with Vegetables</h3>
+<div class="card-meta"><span>🍽️ 2</span><span>⏱️ 35 min</span><span>🌍 European</span></div>
+<div class="card-ingredients">salmon, butter, potatoes, broccoli</div>
+<div class="card-footer"><span class="co2-mini">🌿 2.01 kg CO₂e/serving</span><span class="swaps">2 swaps</span></div></div></div><div class="recipe-card"><div class="card-body"><h3>Bacon Cheeseburger</h3>
+<div class="card-meta"><span>🍽️ 4</span><span>⏱️ 20 min</span><span>🌍 American</span></div>
+<div class="card-ingredients">beef, bacon, cheese, bread, lettuce</div>
+<div class="card-footer"><span class="co2-mini">🌿 4.34 kg CO₂e/serving</span><span class="swaps">3 swaps</span></div></div></div><div class="recipe-card"><div class="card-body"><h3>Vegetable Lentil Soup</h3>
+<div class="card-meta"><span>🍽️ 4</span><span>⏱️ 40 min</span><span>🌍 Mediterranean</span></div>
+<div class="card-ingredients">lentils, carrots, onions, celery, spinach</div>
+<div class="card-footer"><span class="co2-mini">🌿 0.21 kg CO₂e/serving</span><span class="swaps">Eco-friendly ✓</span></div></div></div></div></div>
+<div class="dash-half"><div class="chat-container">
+<div class="chat-header"><div class="assistant-avatar">🌿</div><div><h2>Eco-Nudge Assistant</h2><p class="assistant-status">Ready to help with sustainable meal planning</p></div></div>
+<div class="chat-messages-main">
+<div class="chat-message assistant"><div class="message-avatar">🌿</div><div class="message-content"><p>Hi! I can help with sustainable cooking. Try asking me about:</p>
+<ul><li>🥗 Sustainable recipe alternatives</li><li>🔄 Eco-friendly ingredient swaps</li><li>📊 Environmental impact of meals</li><li>💡 Reducing food carbon footprint</li></ul></div></div>
+<div class="chat-message user"><div class="message-content"><p>What are good alternatives to beef?</p></div></div>
+<div class="chat-message assistant"><div class="message-avatar">🌿</div><div class="message-content"><p>Great question! Here are some alternatives sorted by carbon savings:</p>
+<ul><li><strong>Lentils</strong> — 0.9 kg CO₂/kg (vs 27 kg for beef)</li><li><strong>Mushrooms</strong> — great for umami flavor in bolognese</li><li><strong>Tofu</strong> — versatile protein, very low impact</li></ul></div></div>
+</div>
+<div class="quick-prompts"><button class="qp-btn">🍽️ Low-carbon dinner</button><button class="qp-btn">🥩→🌱 Beef alternatives</button><button class="qp-btn">🍝 Greener pasta</button><button class="qp-btn">🧀 Cheese impact</button></div>
+<div class="chat-input-area main-chat-input"><input type="text" placeholder="Ask me anything about sustainable eating…"><button class="btn btn-send">➤</button></div></div></div></div>
+</main>
+</body>
+</html>

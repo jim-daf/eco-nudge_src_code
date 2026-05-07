@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco-Nudge | Sustainable Meal Planning</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="eye-tracking-research.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Lora:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- ===== Login Screen ===== -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-card">
+            <div class="login-brand">
+                <span class="brand-icon" style="font-size:2.5rem;">🌿</span>
+                <h1 style="font-size:1.8rem; margin-top:0.5rem;">Eco-Nudge</h1>
+                <p class="subtitle">Sustainable Meal Planning</p>
+            </div>
+            <div class="login-form">
+                <div class="login-tabs">
+                    <button class="login-tab active" id="tabLogin" type="button">Log In</button>
+                    <button class="login-tab" id="tabSignup" type="button">Sign Up</button>
+                </div>
+                <label for="loginUsername" style="font-weight:600; margin-bottom:0.25rem; display:block;">Username</label>
+                <input type="text" id="loginUsername" placeholder="e.g., alice_green" maxlength="30" autocomplete="username">
+                <label for="loginPassword" style="font-weight:600; margin-bottom:0.25rem; display:block; margin-top:0.75rem;">Password</label>
+                <input type="password" id="loginPassword" placeholder="Min 6 characters" maxlength="128" autocomplete="current-password">
+                <p class="login-error" id="loginError" style="color:var(--red-500); font-size:0.85rem; margin-top:0.4rem; display:none;"></p>
+                <button class="btn btn-primary" id="loginBtn" style="width:100%; margin-top:0.75rem; padding:0.75rem;">Log In</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Onboarding Preferences Wizard ===== -->
+    <div class="onboarding-overlay hidden" id="onboardingOverlay">
+        <div class="onboarding-card">
+            <div class="onboarding-header">
+                <span class="brand-icon" style="font-size:2rem;">🌿</span>
+                <h2>Welcome to Eco-Nudge!</h2>
+                <p class="subtitle">Let's personalize your experience in a few quick steps.</p>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="onboarding-progress">
+                <div class="onboarding-progress-bar" id="onboardingProgressBar" style="width:33.3%"></div>
+            </div>
+            <div class="onboarding-steps-indicator">
+                <span class="step-dot active" data-step="1">1</span>
+                <span class="step-dot" data-step="2">2</span>
+                <span class="step-dot" data-step="3">3</span>
+            </div>
+
+            <!-- Step 1: Focus Areas -->
+            <div class="onboarding-step active" id="onboardingStep1">
+                <h3>🎯 What matters most to you?</h3>
+                <p class="step-desc">Choose the areas you'd like Eco-Nudge to focus on when suggesting improvements.</p>
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="obFocusCarbon" checked> 🌍 Carbon footprint reduction
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="obFocusHealth" checked> ❤️ Health improvements
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="obFocusCost"> 💰 Cost optimization
+                    </label>
+                </div>
+            </div>
+
+            <!-- Step 2: Dietary Restrictions -->
+            <div class="onboarding-step" id="onboardingStep2">
+                <h3>🍽️ Any dietary preferences?</h3>
+                <p class="step-desc">Select any that apply — we'll tailor recipes and suggestions accordingly.</p>
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="obDietVegetarian"> 🥬 Vegetarian
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="obDietVegan"> 🌱 Vegan
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="obDietGlutenFree"> 🌾 Gluten-free
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="obDietDairyFree"> 🥛 Dairy-free
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="obDietNutFree"> 🥜 Nut-free
+                    </label>
+                </div>
+            </div>
+
+            <!-- Step 3: Excluded Foods -->
+            <div class="onboarding-step" id="onboardingStep3">
+                <h3>🚫 Any foods to avoid?</h3>
+                <p class="step-desc">Add specific foods you'd like excluded from suggestions (allergies, dislikes, etc.).</p>
+                <div class="form-group">
+                    <div style="display:flex;gap:8px;">
+                        <input type="text" id="obExcludeFoodInput" placeholder="e.g., shellfish, cilantro, tofu">
+                        <button class="btn btn-primary" id="obAddExcludeFoodBtn" type="button">Add</button>
+                    </div>
+                    <small>Press Add or Enter to add foods. You can always change these later in Settings.</small>
+                </div>
+                <div class="form-group">
+                    <label>Excluded Foods</label>
+                    <div id="obExcludedFoodTagList" style="display:flex;flex-wrap:wrap;gap:8px;min-height:32px;">
+                        <span style="color:var(--text-secondary);font-style:italic;">No foods excluded yet.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation buttons -->
+            <div class="onboarding-nav">
+                <button class="btn btn-outline" id="onboardingBack" style="display:none;">← Back</button>
+                <div style="flex:1"></div>
+                <button class="btn btn-primary" id="onboardingNext">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Top Navigation ===== -->
+    <nav class="top-nav">
+        <a href="#" class="nav-brand" id="navBrandLink" aria-label="Go to Recipe Suggestions">
+            <span class="brand-icon">🌿</span>
+            <span class="brand-name">Eco-Nudge</span>
+        </a>
+        <div class="nav-links">
+            <a href="#" class="nav-link active" data-view="recipes">Recipe Suggestions</a>
+            <a href="#" class="nav-link nav-link-recipe" data-view="detail" id="navRecipeLink" style="display:none;">📋 <span id="navRecipeName">Recipe</span></a>
+            <a href="#" class="nav-link" data-view="saved">My Recipes</a>
+            <a href="#" class="nav-link" data-view="impact">My Impact</a>
+            <a href="#" class="nav-link" data-view="settings">Settings</a>
+        </div>
+        <div class="nav-status">
+            <span class="user-greeting" id="userGreeting" style="display:none;">
+                Hi <span id="userDisplayName"></span>
+            </span>
+            <button class="btn btn-outline btn-sm" id="logoutBtn" style="display:none; font-size:0.8rem; padding:0.3rem 0.7rem;">Logout</button>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark/light theme">
+                <span class="icon-sun">☀️</span>
+                <span class="icon-moon">🌙</span>
+                <span class="theme-toggle-thumb"></span>
+            </button>
+            <span class="streak-badge" id="streakBadge" title="Eco choices streak">🔥 0</span>
+        </div>
+    </nav>
+
+    <!-- ===== Main Content Area ===== -->
+    <main class="main-content">
+
+        <!-- ===== RECIPES VIEW ===== -->
+        <section id="view-recipes" class="view active">
+            <div class="view-header">
+                <h1>Recipe Suggestions</h1>
+                <p class="subtitle">Browse recipes and we'll help you make eco-friendly choices.</p>
+            </div>
+
+            <!-- Recipe Slideshow -->
+            <div class="recipe-slideshow">
+                <button class="slideshow-btn slideshow-prev" id="slideshowPrev" title="Previous">&#8249;</button>
+                <div class="recipe-slideshow-track" id="recipeGrid">
+                    <!-- Populated by JS -->
+                </div>
+                <button class="slideshow-btn slideshow-next" id="slideshowNext" title="Next">&#8250;</button>
+                <div class="slideshow-dots" id="slideshowDots"></div>
+            </div>
+        </section>
+
+        <!-- ===== RECIPE DETAIL / NEGOTIATION VIEW ===== -->
+        <section id="view-detail" class="view">
+            <button class="btn btn-back" id="backToRecipes">← Back to Recipes</button>
+            
+            <div class="detail-layout">
+                <div class="detail-recipe">
+                    <h2 id="detailRecipeName"></h2>
+                    <div class="recipe-meta" id="detailMeta"></div>
+                    
+                    <!-- Carbon Score Card -->
+                    <div class="carbon-score-card" id="carbonScoreCard">
+                        <div class="score-header">
+                            <span class="score-label">Carbon Footprint</span>
+                            <span class="score-grade" id="carbonGrade">C</span>
+                        </div>
+                        <div class="score-bar-container">
+                            <div class="score-bar" id="carbonBar"></div>
+                        </div>
+                        <div class="score-details">
+                            <span id="carbonTotal">0.00 kg CO₂e</span>
+                            <span id="carbonPerServing">0.00 kg CO₂e/serving</span>
+                        </div>
+                    </div>
+
+                    <!-- Ingredient List with inline swap suggestions -->
+                    <div class="ingredient-list" id="ingredientList">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <!-- Bulk actions -->
+                    <div class="panel-actions" style="margin-top:1rem;">
+                        <button class="btn btn-success" id="applyAllBtn" style="display:none;">
+                            ✅ Apply All Suggestions
+                        </button>
+                        <button class="btn btn-outline" id="dismissAllBtn" style="display:none;">
+                            No thanks, keep original
+                        </button>
+                    </div>
+
+                    <!-- AI-powered extra suggestions -->
+                    <div class="ai-suggestions-section" id="aiSuggestionsSection">
+                        <button class="btn btn-ai-suggest" id="aiSuggestBtn">
+                            🤖 Ask AI for more swaps
+                        </button>
+                        <div class="ai-suggestions-container" id="aiSuggestionsContainer"></div>
+                    </div>
+
+                    <!-- Hidden container for suggestion state tracking -->
+                    <div id="suggestionsContainer" style="display:none;"></div>
+
+                    <!-- Save Recipe Button -->
+                    <button class="btn btn-save-recipe" id="saveRecipeBtn">
+                        💾 Save Recipe
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== MY RECIPES (SAVED) VIEW ===== -->
+        <section id="view-saved" class="view">
+            <div class="view-header">
+                <div class="view-header-row">
+                    <div>
+                        <h1>My Recipes</h1>
+                        <p class="subtitle">Your saved and modified recipes in one place.</p>
+                    </div>
+                    <button class="btn btn-primary" id="addRecipeBtn">Add Recipe</button>
+                </div>
+            </div>
+            <div class="saved-recipes-grid" id="savedRecipesGrid">
+                <div class="saved-empty" id="savedEmpty">
+                    <p style="font-size:2rem; margin-bottom:0.5rem;">📖</p>
+                    <p>No saved recipes yet. Open a recipe, customise it, and hit <strong>Save Recipe</strong>, or use the <strong>Add Recipe</strong> button above!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== ADD RECIPE DIALOG ===== -->
+        <div class="dialog-overlay" id="addRecipeOverlay">
+            <div class="dialog-box">
+                <div class="dialog-header">
+                    <h2>📝 Add Your Own Recipe</h2>
+                    <button class="dialog-close" id="addRecipeClose" aria-label="Close">✕</button>
+                </div>
+                <div class="dialog-body">
+                    <div class="form-group">
+                        <label for="customRecipeName">Recipe Name</label>
+                        <input type="text" id="customRecipeName" placeholder="e.g., Spaghetti Carbonara">
+                    </div>
+                    <div class="form-group">
+                        <label for="customIngredients">Ingredients (one per line: amount unit ingredient)</label>
+                        <textarea id="customIngredients" rows="6" placeholder="500g beef&#10;400g tomatoes&#10;200g pasta&#10;50g cheese"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="customServings">Servings</label>
+                        <input type="number" id="customServings" value="4" min="1" max="20">
+                    </div>
+                </div>
+                <div class="dialog-footer">
+                    <button class="btn btn-outline" id="addRecipeCancelBtn">Cancel</button>
+                    <button class="btn btn-primary" id="analyzeCustomBtn">Save</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== SAVE BEFORE LEAVING DIALOG ===== -->
+        <div class="dialog-overlay" id="saveBeforeLeavingOverlay">
+            <div class="dialog-box save-before-leaving-dialog">
+                <div class="dialog-header">
+                    <h2>Save Recipe?</h2>
+                </div>
+                <div class="dialog-body">
+                    <p>Do you want to save this recipe before leaving?</p>
+                </div>
+                <div class="dialog-footer">
+                    <button class="btn btn-outline" id="saveBeforeLeavingNo">No</button>
+                    <button class="btn btn-primary" id="saveBeforeLeavingYes">Yes</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== CHATBOT POPUP ===== -->
+        <div id="chatbotPopup" class="chatbot-popup">
+            <div class="chatbot-popup-header">
+                <div class="chatbot-popup-title">
+                    <span class="assistant-avatar-sm">🌿</span>
+                    <div>
+                        <strong>Eco-Nudge Assistant</strong>
+                        <span class="assistant-status">Ready to help</span>
+                    </div>
+                </div>
+                <button class="chatbot-popup-close" id="chatbotPopupClose" aria-label="Close chat">✕</button>
+            </div>
+            <div class="chat-messages-main" id="mainChatMessages">
+                <div class="chat-message assistant">
+                    <div class="message-avatar">🌿</div>
+                    <div class="message-content">
+                        <p id="chatGreetingText">Hey! I'm the Eco-Nudge assistant. I can look up recipe carbon footprints, suggest lower-impact swaps, help with meal planning, or answer questions about food sustainability. What are you cooking?</p>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-input-area main-chat-input">
+                <input type="text" id="mainChatInput" placeholder="Ask me anything about sustainable eating...">
+                <button class="btn btn-send" id="mainChatSend">➤</button>
+            </div>
+        </div>
+
+        <!-- Floating chatbot toggle button -->
+        <button class="chatbot-fab" id="chatbotFab" aria-label="Open AI Assistant" title="AI Assistant">
+            <span class="chatbot-fab-icon" id="chatbotFabIcon">🤖</span>
+        </button>
+
+        <!-- ===== IMPACT VIEW ===== -->
+        <section id="view-impact" class="view">
+            <div class="view-header">
+                <h1>Your Eco Impact</h1>
+                <p class="subtitle">Track your sustainable choices and see the difference you're making.</p>
+            </div>
+
+            <div class="impact-stats-grid">
+                <div class="impact-card highlight">
+                    <div class="impact-icon">🌍</div>
+                    <div class="impact-value" id="totalCO2Saved">0.00</div>
+                    <div class="impact-label">kg CO₂ saved</div>
+                    <div class="impact-equiv" id="co2Equiv"></div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-icon">🥗</div>
+                    <div class="impact-value" id="mealsOptimized">0</div>
+                    <div class="impact-label">Meals optimized</div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-icon">🔄</div>
+                    <div class="impact-value" id="swapsMade">0</div>
+                    <div class="impact-label">Ingredient swaps</div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-icon">🔥</div>
+                    <div class="impact-value" id="currentStreak">0</div>
+                    <div class="impact-label">Day streak</div>
+                </div>
+            </div>
+
+            <!-- Impact History -->
+            <div class="impact-history">
+                <h3>Recent Activity</h3>
+                <div class="history-list" id="historyList">
+                    <div class="history-empty">
+                        <p>No eco-choices recorded yet. Start by analyzing a recipe!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Chart -->
+            <div class="impact-chart-card">
+                <h3>Weekly Carbon Savings</h3>
+                <div class="chart-container" id="weeklyChart">
+                    <div class="chart-bars">
+                        <div class="chart-bar-wrapper" data-day="Mon">
+                            <div class="chart-bar" style="height: 0%"></div>
+                            <span class="chart-label">Mon</span>
+                        </div>
+                        <div class="chart-bar-wrapper" data-day="Tue">
+                            <div class="chart-bar" style="height: 0%"></div>
+                            <span class="chart-label">Tue</span>
+                        </div>
+                        <div class="chart-bar-wrapper" data-day="Wed">
+                            <div class="chart-bar" style="height: 0%"></div>
+                            <span class="chart-label">Wed</span>
+                        </div>
+                        <div class="chart-bar-wrapper" data-day="Thu">
+                            <div class="chart-bar" style="height: 0%"></div>
+                            <span class="chart-label">Thu</span>
+                        </div>
+                        <div class="chart-bar-wrapper" data-day="Fri">
+                            <div class="chart-bar" style="height: 0%"></div>
+                            <span class="chart-label">Fri</span>
+                        </div>
+                        <div class="chart-bar-wrapper" data-day="Sat">
+                            <div class="chart-bar" style="height: 0%"></div>
+                            <span class="chart-label">Sat</span>
+                        </div>
+                        <div class="chart-bar-wrapper" data-day="Sun">
+                            <div class="chart-bar" style="height: 0%"></div>
+                            <span class="chart-label">Sun</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SETTINGS VIEW ===== -->
+        <section id="view-settings" class="view">
+            <div class="view-header">
+                <h1>Settings</h1>
+                <p class="subtitle">Configure your Eco-Nudge experience.</p>
+            </div>
+
+
+
+            <div class="settings-card">
+                <h3>🎯 Nudge Preferences</h3>
+                <div class="form-group">
+                    <label>Focus Areas</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="focusCarbon" checked> 🌍 Carbon footprint reduction
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="focusHealth" checked> ❤️ Health improvements
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="focusCost"> 💰 Cost optimization
+                        </label>
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="saveFocusAreas">Save Focus Areas</button>
+            </div>
+
+            <div class="settings-card">
+                <h3>🍽️ Dietary Preferences</h3>
+                <div class="form-group">
+                    <label>Dietary Restrictions</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="dietVegetarian"> 🥬 Vegetarian
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="dietVegan"> 🌱 Vegan
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="dietGlutenFree"> 🌾 Gluten-free
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="dietDairyFree"> 🥛 Dairy-free
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="dietNutFree"> 🥜 Nut-free
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="excludeFoodInput">Foods to Exclude (allergies / dislikes)</label>
+                    <div style="display:flex;gap:8px;">
+                        <input type="text" id="excludeFoodInput" placeholder="e.g., shellfish, cilantro, tofu">
+                        <button class="btn btn-primary" id="addExcludeFoodBtn">Add</button>
+                    </div>
+                    <small>Press Add or Enter. These foods will be excluded from AI suggestions and meal planner swap cards.</small>
+                </div>
+                <div class="form-group">
+                    <label>Excluded Foods</label>
+                    <div id="excludedFoodTagList" style="display:flex;flex-wrap:wrap;gap:8px;min-height:32px;">
+                        <!-- Tags populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="settings-card">
+                <h3>🔒 Privacy</h3>
+                <p>All data stays in your browser. Conversations go through OpenAI's API. Your API key never leaves your browser.</p>
+                <button class="btn btn-danger" id="clearDataBtn">Clear All Data</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===== Notification Toast ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ===== Modal Overlay ===== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content" id="modalContent">
+            <!-- Dynamic content -->
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="eco-data.js"></script>
+    <script src="app.js"></script>
+    <script src="webgazer.js" type="text/javascript"></script>
+    
+    <script src="eye-tracking-research.js"></script>
+</body>
+</html>

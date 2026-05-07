@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sketch 33 — Light — Minimal Nav, Cards, Sage</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f4f6f0;--s:#ffffff;--s2:#eef2e8;--bdr:#d0dcc4;--tx:#1e2e18;--mut:#607050;--acc:#65a30d;--acc2:#4d7c0f;--adim:rgba(101,163,13,0.08);--radius:12px;--font:'Inter',sans-serif;--display:'Playfair Display',Georgia,serif}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);line-height:1.6;min-height:100vh}
+h1,h2,h3{font-family:var(--display)}
+h1{color:var(--acc);font-size:1.8rem}
+.subtitle{color:var(--mut);margin-top:0.25rem}
+.view-header{margin-bottom:1.5rem}
+a{text-decoration:none;color:var(--mut)}
+
+.minimal-nav{display:flex;align-items:center;gap:0.6rem;padding:1rem 2rem}
+.brand-icon{font-size:1.4rem}
+.brand-name{font-family:var(--display);font-size:1.15rem;font-weight:700}
+.streak{margin-left:auto;padding:0.3rem 0.65rem;border-radius:20px;font-size:0.8rem;font-weight:600}
+
+.btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem;border:none;border-radius:8px;font-family:var(--font);font-size:0.85rem;font-weight:500;cursor:pointer;transition:0.2s}
+.btn-primary{background:var(--acc2);color:white}
+.btn-primary:hover{background:var(--acc);box-shadow:0 4px 12px var(--adim)}
+.btn-back{background:var(--s);color:var(--mut);border:1px solid var(--bdr);margin-bottom:1rem}
+.btn-save{background:var(--s);color:var(--acc);border:1px solid var(--acc);margin-top:1rem}
+.btn-accept{background:var(--acc2);color:white;font-size:0.8rem;padding:0.3rem 0.8rem}
+.btn-skip{background:none;color:var(--mut);border:1px solid var(--bdr);font-size:0.8rem;padding:0.3rem 0.8rem}
+.btn-success{background:var(--acc2);color:white}
+.btn-outline{background:none;color:var(--mut);border:1px solid var(--bdr)}
+.btn-send{background:var(--acc2);color:white;padding:0.5rem 0.8rem}
+.btn-danger{background:#dc2626;color:white}
+
+.recipe-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-bottom:1.5rem}
+.recipe-card{background:var(--s);border-radius:var(--radius);border:1px solid var(--bdr);overflow:hidden;transition:0.2s}
+.recipe-card:hover{border-color:var(--acc);transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,0.2)}
+.card-body{padding:1rem}
+.card-body h3{font-size:1rem;margin-bottom:0.4rem}
+.card-meta{display:flex;gap:0.8rem;color:var(--mut);font-size:0.8rem;margin-bottom:0.5rem}
+.card-ingredients{font-size:0.82rem;color:var(--mut);line-height:1.5}
+.card-footer{margin-top:0.8rem;padding-top:0.6rem;border-top:1px solid var(--bdr);display:flex;justify-content:space-between;font-size:0.8rem}
+.co2-mini{color:var(--mut)}
+.swaps{color:var(--acc);font-weight:600}
+.custom-card{background:var(--s);border-radius:var(--radius);padding:1.5rem;border:2px dashed var(--bdr);margin-top:1rem}
+.custom-card h3{margin-bottom:0.8rem}
+.form-group{margin-bottom:0.8rem}
+.form-group label{display:block;font-size:0.82rem;font-weight:600;color:var(--mut);margin-bottom:0.25rem}
+.form-group input,.form-group textarea{width:100%;padding:0.5rem 0.7rem;border:1.5px solid var(--bdr);border-radius:8px;font-family:var(--font);font-size:0.85rem;color:var(--tx);background:var(--s2);transition:0.2s}
+.form-group input:focus,.form-group textarea:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px var(--adim)}
+
+main{max-width:1200px;margin:0 auto;padding:2rem;}
+    </style>
+</head>
+<body>
+<nav class="minimal-nav"><span class="brand-icon">🌿</span><span class="brand-name" style="color:#65a30d">Eco-Nudge</span><span class="streak" style="background:rgba(101,163,13,0.08);color:#65a30d">🔥 3</span></nav>
+<main>
+<div class="view-header"><h1>Meal Planner</h1><p class="subtitle">Browse recipes or add your own. We'll help you make eco-friendly choices.</p></div>
+<div class="recipe-grid"><div class="recipe-card"><div class="card-body"><h3>Classic Beef Bolognese</h3>
+<div class="card-meta"><span>🍽️ 4</span><span>⏱️ 45 min</span><span>🌍 Italian</span></div>
+<div class="card-ingredients">beef, tomatoes, pasta, cheese</div>
+<div class="card-footer"><span class="co2-mini">🌿 4.02 kg CO₂e/serving</span><span class="swaps">2 swaps</span></div></div></div><div class="recipe-card"><div class="card-body"><h3>Chicken Stir-Fry</h3>
+<div class="card-meta"><span>🍽️ 3</span><span>⏱️ 25 min</span><span>🌍 Asian</span></div>
+<div class="card-ingredients">chicken, rice, broccoli, peppers</div>
+<div class="card-footer"><span class="co2-mini">🌿 1.35 kg CO₂e/serving</span><span class="swaps">2 swaps</span></div></div></div><div class="recipe-card"><div class="card-body"><h3>Lamb Curry</h3>
+<div class="card-meta"><span>🍽️ 4</span><span>⏱️ 60 min</span><span>🌍 Indian</span></div>
+<div class="card-ingredients">lamb, onions, tomatoes, cream, rice</div>
+<div class="card-footer"><span class="co2-mini">🌿 3.72 kg CO₂e/serving</span><span class="swaps">3 swaps</span></div></div></div><div class="recipe-card"><div class="card-body"><h3>Salmon with Vegetables</h3>
+<div class="card-meta"><span>🍽️ 2</span><span>⏱️ 35 min</span><span>🌍 European</span></div>
+<div class="card-ingredients">salmon, butter, potatoes, broccoli</div>
+<div class="card-footer"><span class="co2-mini">🌿 2.01 kg CO₂e/serving</span><span class="swaps">2 swaps</span></div></div></div><div class="recipe-card"><div class="card-body"><h3>Bacon Cheeseburger</h3>
+<div class="card-meta"><span>🍽️ 4</span><span>⏱️ 20 min</span><span>🌍 American</span></div>
+<div class="card-ingredients">beef, bacon, cheese, bread, lettuce</div>
+<div class="card-footer"><span class="co2-mini">🌿 4.34 kg CO₂e/serving</span><span class="swaps">3 swaps</span></div></div></div><div class="recipe-card"><div class="card-body"><h3>Vegetable Lentil Soup</h3>
+<div class="card-meta"><span>🍽️ 4</span><span>⏱️ 40 min</span><span>🌍 Mediterranean</span></div>
+<div class="card-ingredients">lentils, carrots, onions, celery, spinach</div>
+<div class="card-footer"><span class="co2-mini">🌿 0.21 kg CO₂e/serving</span><span class="swaps">Eco-friendly ✓</span></div></div></div></div><div class="custom-card"><h3>📝 Add Your Own Recipe</h3>
+<div class="form-group"><label>Recipe Name</label><input type="text" placeholder="e.g., Spaghetti Carbonara"></div>
+<div class="form-group"><label>Ingredients (one per line)</label><textarea rows="4" placeholder="500g beef&#10;400g tomatoes&#10;200g pasta"></textarea></div>
+<div class="form-group"><label>Servings</label><input type="number" value="4" style="width:80px;"></div>
+<button class="btn btn-primary">🔍 Analyze Recipe</button></div>
+</main>
+</body>
+</html>

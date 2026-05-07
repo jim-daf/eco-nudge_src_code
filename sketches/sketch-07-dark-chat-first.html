@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sketch 07 — Dark Theme, Chat-First Layout</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --bg: #111318;
+            --surface: #191c24;
+            --surface-2: #1f232d;
+            --border: #272c3a;
+            --text: #d8dbe6;
+            --text-muted: #767d94;
+            --green: #4ade80;
+            --green-dim: rgba(74,222,128,0.1);
+            --green-dark: #16a34a;
+            --blue: #60a5fa;
+            --font: 'Inter', sans-serif;
+            --display: 'Playfair Display', Georgia, serif;
+            --radius: 14px;
+        }
+        body { font-family:var(--font); background:var(--bg); color:var(--text); line-height:1.6; }
+        /* NAV — bottom tab style on mobile-first concept */
+        nav { display:flex; align-items:center; justify-content:space-between; padding:0.75rem 2rem; background:var(--surface); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; }
+        .brand { display:flex; align-items:center; gap:0.5rem; }
+        .brand-icon { font-size:1.5rem; }
+        .brand-name { font-family:var(--display); font-size:1.25rem; font-weight:700; color:var(--green); }
+        .nav-links { display:flex; gap:0.25rem; }
+        .nav-link { text-decoration:none; padding:0.5rem 1rem; border-radius:8px; color:var(--text-muted); font-size:0.9rem; font-weight:500; transition:0.2s; }
+        .nav-link:hover { background:var(--green-dim); color:var(--green); }
+        .nav-link.active { background:var(--green-dim); color:var(--green); font-weight:600; }
+        .streak { background:var(--green-dim); padding:0.35rem 0.75rem; border-radius:20px; font-size:0.85rem; font-weight:600; color:var(--green); }
+
+        /* MAIN */
+        main { max-width:1200px; margin:0 auto; padding:2rem; }
+
+        /* ★ CHAT SECTION — FIRST & PROMINENT ★ */
+        .chat-hero {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 0;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface-2);
+        }
+        .avatar { width:44px; height:44px; border-radius:50%; background:var(--green-dim); display:flex; align-items:center; justify-content:center; font-size:1.3rem; }
+        .chat-header-text h2 { font-size:1.1rem; font-weight:600; }
+        .chat-header-text p { font-size:0.8rem; color:var(--text-muted); }
+        .chat-messages { padding:1.5rem; display:flex; flex-direction:column; gap:0.75rem; min-height:200px; max-height:320px; overflow-y:auto; }
+        .msg { display:flex; gap:0.75rem; align-items:flex-start; }
+        .msg.user { flex-direction:row-reverse; }
+        .msg-avatar { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.85rem; flex-shrink:0; }
+        .msg:not(.user) .msg-avatar { background:var(--green-dim); }
+        .msg.user .msg-avatar { background:var(--surface-2); }
+        .msg-bubble { padding:0.65rem 1rem; border-radius:10px; max-width:75%; font-size:0.88rem; line-height:1.5; }
+        .msg:not(.user) .msg-bubble { background:var(--surface-2); border:1px solid var(--border); }
+        .msg.user .msg-bubble { background:var(--green-dark); color:white; }
+        .msg-bubble ul { margin:0.35rem 0; padding-left:1.1rem; }
+        .msg-bubble li { margin-bottom:0.15rem; }
+        .quick-prompts { display:flex; gap:0.5rem; flex-wrap:wrap; padding:0 1.5rem; margin-bottom:0.75rem; }
+        .quick-btn { padding:0.35rem 0.75rem; border:1px solid var(--border); border-radius:20px; background:transparent; color:var(--text-muted); font-size:0.78rem; cursor:pointer; transition:0.2s; font-family:var(--font); }
+        .quick-btn:hover { background:var(--green-dim); border-color:var(--green); color:var(--green); }
+        .chat-input { display:flex; gap:0.5rem; padding:1rem 1.5rem; border-top:1px solid var(--border); }
+        .chat-input input { flex:1; padding:0.6rem 1rem; border:1.5px solid var(--border); border-radius:20px; font-family:var(--font); font-size:0.88rem; color:var(--text); background:var(--bg); }
+        .chat-input input:focus { outline:none; border-color:var(--green); }
+        .send-btn { width:38px; height:38px; border-radius:50%; background:var(--green-dark); color:white; border:none; cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center; transition:0.2s; }
+        .send-btn:hover { background:#15803d; }
+
+        /* ANALYZE + RECIPES ROW */
+        .content-row { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+
+        /* ANALYZE CARD */
+        .analyze-card { background:var(--surface); border-radius:var(--radius); padding:1.5rem; border:1px solid var(--border); }
+        .analyze-card h3 { font-size:1rem; color:var(--green); margin-bottom:0.75rem; }
+        .form-group { margin-bottom:0.75rem; }
+        .form-group label { display:block; font-size:0.82rem; font-weight:600; color:var(--text-muted); margin-bottom:0.3rem; }
+        .form-group input, .form-group textarea { width:100%; padding:0.5rem 0.75rem; border:1.5px solid var(--border); border-radius:8px; font-family:var(--font); font-size:0.85rem; color:var(--text); background:var(--bg); transition:0.2s; }
+        .form-group input:focus, .form-group textarea:focus { outline:none; border-color:var(--green); box-shadow:0 0 0 3px rgba(74,222,128,0.12); }
+        .btn { display:inline-flex; align-items:center; gap:0.5rem; padding:0.55rem 1.2rem; border:none; border-radius:8px; font-family:var(--font); font-size:0.85rem; font-weight:600; cursor:pointer; transition:0.2s; }
+        .btn-primary { background:var(--green-dark); color:white; }
+        .btn-primary:hover { background:#15803d; }
+
+        /* RECIPE LIST (compact) */
+        .recipe-list-card { background:var(--surface); border-radius:var(--radius); padding:1.5rem; border:1px solid var(--border); }
+        .recipe-list-card h3 { font-size:1rem; color:var(--green); margin-bottom:0.75rem; }
+        .recipe-row { display:flex; align-items:center; gap:0.75rem; padding:0.6rem 0; border-bottom:1px solid var(--border); cursor:pointer; transition:0.2s; }
+        .recipe-row:last-child { border-bottom:none; }
+        .recipe-row:hover { background:var(--green-dim); margin:0 -0.5rem; padding:0.6rem 0.5rem; border-radius:8px; }
+        .recipe-thumb { width:50px; height:50px; border-radius:8px; overflow:hidden; flex-shrink:0; }
+        .recipe-thumb img { width:100%; height:100%; object-fit:cover; }
+        .recipe-info { flex:1; }
+        .recipe-info h4 { font-size:0.88rem; font-weight:500; margin-bottom:0.15rem; }
+        .recipe-info .meta { font-size:0.75rem; color:var(--text-muted); }
+        .recipe-co2 { font-size:0.78rem; font-weight:600; padding:0.2rem 0.5rem; border-radius:6px; }
+        .co2-high { background:rgba(239,68,68,0.12); color:#f87171; }
+        .co2-med { background:rgba(251,146,60,0.12); color:#fb923c; }
+        .co2-low { background:rgba(74,222,128,0.12); color:var(--green); }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="brand"><span class="brand-icon">🌿</span><span class="brand-name">Eco-Nudge</span></div>
+        <div class="nav-links">
+            <a href="#" class="nav-link active">Meal Planner</a>
+            <a href="#" class="nav-link">AI Assistant</a>
+            <a href="#" class="nav-link">My Recipes</a>
+            <a href="#" class="nav-link">My Impact</a>
+            <a href="#" class="nav-link">Settings</a>
+        </div>
+        <span class="streak">🔥 3</span>
+    </nav>
+    <main>
+        <!-- ★ CHAT — FIRST & HERO ★ -->
+        <div class="chat-hero">
+            <div class="chat-header">
+                <div class="avatar">🌿</div>
+                <div class="chat-header-text">
+                    <h2>Eco-Nudge Assistant</h2>
+                    <p>Ready to help with sustainable meal planning</p>
+                </div>
+            </div>
+            <div class="chat-messages">
+                <div class="msg">
+                    <div class="msg-avatar">🌿</div>
+                    <div class="msg-bubble">
+                        <p>Hi there! I'm your Eco-Nudge assistant. I can help you with:</p>
+                        <ul>
+                            <li>🥗 Finding sustainable recipe alternatives</li>
+                            <li>🔄 Swapping high-carbon ingredients</li>
+                            <li>📊 Understanding environmental impact</li>
+                            <li>💡 Tips for reducing food carbon footprint</li>
+                        </ul>
+                        <p>What would you like to know?</p>
+                    </div>
+                </div>
+            </div>
+            <div class="quick-prompts">
+                <button class="quick-btn">🍽️ Low-carbon dinner</button>
+                <button class="quick-btn">🥩→🌱 Beef alternatives</button>
+                <button class="quick-btn">🍝 Greener pasta</button>
+                <button class="quick-btn">🧀 Cheese impact</button>
+            </div>
+            <div class="chat-input">
+                <input type="text" placeholder="Ask me anything about sustainable eating...">
+                <button class="send-btn">➤</button>
+            </div>
+        </div>
+
+        <!-- TWO COLUMN: Analyze + Recipe List -->
+        <div class="content-row">
+            <!-- ANALYZE -->
+            <div class="analyze-card">
+                <h3>📝 Analyze My Own Recipe</h3>
+                <div class="form-group"><label>Recipe Name</label><input type="text" placeholder="e.g., Spaghetti Carbonara"></div>
+                <div class="form-group"><label>Ingredients (one per line)</label><textarea rows="4" placeholder="500g beef&#10;400g tomatoes&#10;200g pasta"></textarea></div>
+                <div style="display:flex;gap:0.75rem;align-items:flex-end;">
+                    <div class="form-group" style="width:80px;"><label>Servings</label><input type="number" value="4"></div>
+                    <button class="btn btn-primary" style="margin-bottom:0.75rem;">🔍 Analyze</button>
+                </div>
+            </div>
+
+            <!-- COMPACT RECIPE LIST -->
+            <div class="recipe-list-card">
+                <h3>🍽️ Suggested Recipes</h3>
+                <div class="recipe-row">
+                    <div class="recipe-thumb"><img src="https://images.unsplash.com/photo-1622973536968-3ead9e780960?w=100&h=100&fit=crop" alt=""></div>
+                    <div class="recipe-info"><h4>Classic Beef Bolognese</h4><div class="meta">4 srv · 45 min · Italian</div></div>
+                    <span class="recipe-co2 co2-high">4.02 CO₂</span>
+                </div>
+                <div class="recipe-row">
+                    <div class="recipe-thumb"><img src="https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=100&h=100&fit=crop" alt=""></div>
+                    <div class="recipe-info"><h4>Chicken Stir-Fry</h4><div class="meta">3 srv · 25 min · Asian</div></div>
+                    <span class="recipe-co2 co2-med">1.35 CO₂</span>
+                </div>
+                <div class="recipe-row">
+                    <div class="recipe-thumb"><img src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=100&h=100&fit=crop" alt=""></div>
+                    <div class="recipe-info"><h4>Lamb Curry</h4><div class="meta">4 srv · 60 min · Indian</div></div>
+                    <span class="recipe-co2 co2-high">3.72 CO₂</span>
+                </div>
+                <div class="recipe-row">
+                    <div class="recipe-thumb"><img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=100&h=100&fit=crop" alt=""></div>
+                    <div class="recipe-info"><h4>Salmon with Buttered Veg</h4><div class="meta">2 srv · 35 min · European</div></div>
+                    <span class="recipe-co2 co2-med">2.01 CO₂</span>
+                </div>
+                <div class="recipe-row">
+                    <div class="recipe-thumb"><img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=100&h=100&fit=crop" alt=""></div>
+                    <div class="recipe-info"><h4>Bacon Cheeseburger</h4><div class="meta">4 srv · 20 min · American</div></div>
+                    <span class="recipe-co2 co2-high">4.34 CO₂</span>
+                </div>
+                <div class="recipe-row">
+                    <div class="recipe-thumb"><img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?w=100&h=100&fit=crop" alt=""></div>
+                    <div class="recipe-info"><h4>Vegetable Lentil Soup</h4><div class="meta">4 srv · 40 min · Mediterranean</div></div>
+                    <span class="recipe-co2 co2-low">0.21 CO₂</span>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

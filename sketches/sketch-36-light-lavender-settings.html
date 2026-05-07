@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sketch 36 — Light — Tab Nav, Settings Accordion, Lavender</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f8f4ff;--s:#ffffff;--s2:#f0ecff;--bdr:#d4ccf0;--tx:#1e1830;--mut:#706090;--acc:#7e22ce;--acc2:#6b21a8;--adim:rgba(126,34,206,0.08);--radius:12px;--font:'Inter',sans-serif;--display:'Playfair Display',Georgia,serif}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);line-height:1.6;min-height:100vh}
+h1,h2,h3{font-family:var(--display)}
+h1{color:var(--acc);font-size:1.8rem}
+.subtitle{color:var(--mut);margin-top:0.25rem}
+.view-header{margin-bottom:1.5rem}
+a{text-decoration:none;color:var(--mut)}
+
+.tab-bar{display:flex;gap:0;background:var(--s);border-bottom:1px solid var(--bdr);overflow-x:auto;position:sticky;top:0;z-index:100}
+.tab{padding:0.6rem 1.2rem;border:none;background:none;font-family:var(--font);font-size:0.85rem;color:var(--mut);cursor:pointer;border-bottom:2px solid transparent;transition:0.2s}
+.tab:hover,.tab.active{color:var(--acc);border-bottom-color:var(--acc);background:var(--adim)}
+
+.btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem;border:none;border-radius:8px;font-family:var(--font);font-size:0.85rem;font-weight:500;cursor:pointer;transition:0.2s}
+.btn-primary{background:var(--acc2);color:white}
+.btn-primary:hover{background:var(--acc);box-shadow:0 4px 12px var(--adim)}
+.btn-back{background:var(--s);color:var(--mut);border:1px solid var(--bdr);margin-bottom:1rem}
+.btn-save{background:var(--s);color:var(--acc);border:1px solid var(--acc);margin-top:1rem}
+.btn-accept{background:var(--acc2);color:white;font-size:0.8rem;padding:0.3rem 0.8rem}
+.btn-skip{background:none;color:var(--mut);border:1px solid var(--bdr);font-size:0.8rem;padding:0.3rem 0.8rem}
+.btn-success{background:var(--acc2);color:white}
+.btn-outline{background:none;color:var(--mut);border:1px solid var(--bdr)}
+.btn-send{background:var(--acc2);color:white;padding:0.5rem 0.8rem}
+.btn-danger{background:#dc2626;color:white}
+
+.settings-card{background:var(--s);border-radius:var(--radius);padding:1.5rem;border:1px solid var(--bdr);margin-bottom:1rem}
+.settings-card h3{margin-bottom:0.8rem}
+.range-labels{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--mut);margin-top:0.3rem}
+.checkbox-group{display:flex;flex-direction:column;gap:0.4rem}
+.cb{font-size:0.85rem;color:var(--tx);display:flex;align-items:center;gap:0.4rem}
+
+main{max-width:1200px;margin:0 auto;padding:2rem;}
+    </style>
+</head>
+<body>
+<div class="tab-bar"><button class="tab">Meal Planner</button><button class="tab">Recipe Detail</button><button class="tab">AI Assistant</button><button class="tab">My Recipes</button><button class="tab">My Impact</button><button class="tab active">Settings</button></div>
+<main>
+<div class="view-header"><h1>Settings</h1><p class="subtitle">Configure your Eco-Nudge experience.</p></div>
+<div class="settings-card"><h3>🎯 Nudge Preferences</h3>
+<div class="form-group"><label>Suggestion Intensity</label><input type="range" min="1" max="5" value="3" style="width:100%">
+<div class="range-labels"><span>Gentle</span><span>Balanced</span><span>Persistent</span></div></div>
+<div class="form-group"><label>Focus Areas</label>
+<div class="checkbox-group"><label class="cb"><input type="checkbox" checked> 🌍 Carbon footprint</label>
+<label class="cb"><input type="checkbox" checked> ❤️ Health</label><label class="cb"><input type="checkbox"> 💰 Cost</label></div></div></div>
+<div class="settings-card"><h3>🍽️ Dietary Preferences</h3>
+<div class="checkbox-group"><label class="cb"><input type="checkbox"> 🥬 Vegetarian</label>
+<label class="cb"><input type="checkbox"> 🌱 Vegan</label><label class="cb"><input type="checkbox"> 🌾 Gluten-free</label>
+<label class="cb"><input type="checkbox"> 🥛 Dairy-free</label></div>
+<div class="form-group"><label>Allergies / Dislikes</label><input type="text" placeholder="e.g., shellfish, cilantro"></div>
+<button class="btn btn-primary">Save Preferences</button></div>
+<div class="settings-card"><h3>🔒 Privacy</h3><p>All data stored locally. API key never leaves your browser.</p><button class="btn btn-danger">Clear All Data</button></div>
+</main>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sketch 38 — Light — Sidebar Left, Welcome, Fresh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#ecfdf5;--s:#ffffff;--s2:#d1fae5;--bdr:#a7f3d0;--tx:#064e3b;--mut:#3b7a5e;--acc:#059669;--acc2:#047857;--adim:rgba(5,150,105,0.10);--radius:12px;--font:'Inter',sans-serif;--display:'Playfair Display',Georgia,serif}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);line-height:1.6;min-height:100vh}
+h1,h2,h3{font-family:var(--display)}
+h1{color:var(--acc);font-size:1.8rem}
+.subtitle{color:var(--mut);margin-top:0.25rem}
+.view-header{margin-bottom:1.5rem}
+a{text-decoration:none;color:var(--mut)}
+
+.sidebar{position:fixed;top:0;left:0;width:200px;height:100vh;background:var(--s);border-right:1px solid var(--bdr);padding:1rem 0;display:flex;flex-direction:column;z-index:100}
+.sidebar-brand{padding:0.8rem 1rem;font-family:var(--display);font-weight:700;color:var(--acc);display:flex;align-items:center;gap:0.4rem;font-size:1.1rem}
+.side-link{display:block;padding:0.5rem 1rem;font-size:0.85rem;color:var(--mut);transition:0.2s}
+.side-link:hover,.side-link.active{background:var(--adim);color:var(--acc)}
+.sidebar-streak{margin-top:auto;padding:0.8rem 1rem;font-size:0.8rem;color:var(--acc)}
+.has-sidebar-left{margin-left:200px}
+
+.btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem;border:none;border-radius:8px;font-family:var(--font);font-size:0.85rem;font-weight:500;cursor:pointer;transition:0.2s}
+.btn-primary{background:var(--acc2);color:white}
+.btn-primary:hover{background:var(--acc);box-shadow:0 4px 12px var(--adim)}
+.btn-back{background:var(--s);color:var(--mut);border:1px solid var(--bdr);margin-bottom:1rem}
+.btn-save{background:var(--s);color:var(--acc);border:1px solid var(--acc);margin-top:1rem}
+.btn-accept{background:var(--acc2);color:white;font-size:0.8rem;padding:0.3rem 0.8rem}
+.btn-skip{background:none;color:var(--mut);border:1px solid var(--bdr);font-size:0.8rem;padding:0.3rem 0.8rem}
+.btn-success{background:var(--acc2);color:white}
+.btn-outline{background:none;color:var(--mut);border:1px solid var(--bdr)}
+.btn-send{background:var(--acc2);color:white;padding:0.5rem 0.8rem}
+.btn-danger{background:#dc2626;color:white}
+
+.welcome-container{text-align:center;padding:3rem 1rem}
+.welcome-hero{margin-bottom:2rem}
+.welcome-hero h1{font-size:2.2rem}
+.welcome-features{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:2rem}
+.feature-card{background:var(--s);border-radius:var(--radius);padding:1.5rem;border:1px solid var(--bdr);transition:0.2s}
+.feature-card:hover{border-color:var(--acc)}
+.feature-icon{font-size:2rem;margin-bottom:0.5rem}
+.feature-card h3{font-size:1rem;margin-bottom:0.3rem}
+.feature-card p{font-size:0.82rem;color:var(--mut)}
+
+main{max-width:1200px;margin:0 auto;margin-left:200px;padding:2rem;}
+    </style>
+</head>
+<body class="has-sidebar-left">
+<aside class="sidebar"><div class="sidebar-brand"><span>🌿</span><span class="brand-name">Eco-Nudge</span></div><a href="#" class="side-link active">🍽️ Meal Planner</a><a href="#" class="side-link">📋 Recipe Detail</a><a href="#" class="side-link">🤖 AI Assistant</a><a href="#" class="side-link">📖 My Recipes</a><a href="#" class="side-link">🌍 My Impact</a><a href="#" class="side-link">⚙️ Settings</a><div class="sidebar-streak">🔥 3 streak</div></aside>
+<main>
+<div class="welcome-container">
+<div class="welcome-hero"><h1>🌿 Welcome to Eco-Nudge</h1><p class="subtitle">Your sustainable meal planning assistant</p></div>
+<div class="welcome-features">
+<div class="feature-card"><div class="feature-icon">🍽️</div><h3>Browse Recipes</h3><p>Explore meals with carbon footprint data</p></div>
+<div class="feature-card"><div class="feature-icon">🔄</div><h3>Smart Swaps</h3><p>AI-powered ingredient alternatives</p></div>
+<div class="feature-card"><div class="feature-icon">📊</div><h3>Track Impact</h3><p>See your environmental savings</p></div>
+<div class="feature-card"><div class="feature-icon">🤖</div><h3>AI Assistant</h3><p>Chat about sustainable cooking</p></div>
+</div>
+<button class="btn btn-primary" style="margin-top:1.5rem;padding:0.8rem 2rem;font-size:1rem">Get Started →</button></div>
+</main>
+</body>
+</html>

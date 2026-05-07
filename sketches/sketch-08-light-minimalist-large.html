@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sketch 08 — Light Minimalist, Large Cards</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --bg: #ffffff;
+            --surface: #fafafa;
+            --border: #ebebeb;
+            --text: #1a1a1a;
+            --text-muted: #888888;
+            --accent: #2d6a4f;
+            --accent-light: #52b788;
+            --accent-bg: rgba(45,106,79,0.06);
+            --red: #d62828;
+            --orange: #e76f51;
+            --font: 'Inter', sans-serif;
+            --display: 'Playfair Display', Georgia, serif;
+            --radius: 16px;
+        }
+        body { font-family:var(--font); background:var(--bg); color:var(--text); line-height:1.6; }
+        /* MINIMAL NAV */
+        nav { display:flex; align-items:center; justify-content:space-between; padding:1rem 3rem; max-width:1300px; margin:0 auto; }
+        .brand { display:flex; align-items:center; gap:0.5rem; }
+        .brand-icon { font-size:1.4rem; }
+        .brand-name { font-family:var(--display); font-size:1.3rem; font-weight:700; color:var(--accent); }
+        .nav-links { display:flex; gap:2rem; }
+        .nav-link { text-decoration:none; color:var(--text-muted); font-size:0.9rem; font-weight:500; transition:0.2s; position:relative; }
+        .nav-link:hover { color:var(--text); }
+        .nav-link.active { color:var(--text); }
+        .nav-link.active::after { content:''; position:absolute; bottom:-4px; left:0; right:0; height:2px; background:var(--accent); border-radius:1px; }
+        .streak { font-size:0.85rem; color:var(--text-muted); }
+
+        /* MAIN */
+        main { max-width:1100px; margin:0 auto; padding:2rem 2.5rem; }
+
+        /* HERO HEADING */
+        .hero { text-align:center; margin-bottom:3rem; padding-top:1rem; }
+        .hero h1 { font-family:var(--display); font-size:2.5rem; color:var(--text); margin-bottom:0.5rem; font-weight:700; }
+        .hero .subtitle { color:var(--text-muted); font-size:1.1rem; max-width:500px; margin:0 auto; }
+
+        /* ★ RECIPE INPUT — FIRST (centered hero style) ★ */
+        .analyze-hero {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 2.5rem 3rem;
+            border: 1px solid var(--border);
+            margin-bottom: 3.5rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .analyze-hero h2 { font-family:var(--display); font-size:1.4rem; text-align:center; margin-bottom:1.5rem; color:var(--accent); }
+        .form-row { display:flex; gap:1rem; margin-bottom:1rem; }
+        .form-row .form-group { flex:1; }
+        .form-group { margin-bottom:1rem; }
+        .form-group label { display:block; font-size:0.82rem; font-weight:600; color:var(--text-muted); margin-bottom:0.3rem; text-transform:uppercase; letter-spacing:0.05em; }
+        .form-group input, .form-group textarea { width:100%; padding:0.7rem 1rem; border:1px solid var(--border); border-radius:10px; font-family:var(--font); font-size:0.9rem; color:var(--text); background:white; transition:0.2s; }
+        .form-group input:focus, .form-group textarea:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(45,106,79,0.08); }
+        .btn { display:inline-flex; align-items:center; gap:0.5rem; padding:0.7rem 1.5rem; border:none; border-radius:10px; font-family:var(--font); font-size:0.9rem; font-weight:600; cursor:pointer; transition:0.2s; }
+        .btn-primary { background:var(--accent); color:white; width:100%; justify-content:center; }
+        .btn-primary:hover { background:#245a42; box-shadow:0 4px 12px rgba(45,106,79,0.2); }
+
+        /* SECTION LABEL */
+        .section-label { font-size:0.8rem; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:1.25rem; }
+
+        /* ★ LARGE CARDS — 2 columns ★ */
+        .recipe-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.75rem; }
+        .recipe-card { background:var(--bg); border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; cursor:pointer; transition:0.3s; }
+        .recipe-card:hover { box-shadow:0 12px 40px rgba(0,0,0,0.06); transform:translateY(-4px); }
+        .card-img { width:100%; height:220px; overflow:hidden; }
+        .card-img img { width:100%; height:100%; object-fit:cover; transition:transform 0.5s; }
+        .recipe-card:hover .card-img img { transform:scale(1.04); }
+        .card-body { padding:1.5rem; }
+        .card-body h3 { font-family:var(--display); font-size:1.15rem; margin-bottom:0.4rem; font-weight:600; }
+        .card-meta { display:flex; gap:1rem; color:var(--text-muted); font-size:0.82rem; margin-bottom:0.75rem; }
+        .card-ingredients { font-size:0.85rem; color:var(--text-muted); line-height:1.5; }
+        .hl { background:var(--accent-bg); padding:0.1rem 0.4rem; border-radius:4px; color:var(--accent); font-weight:600; }
+        .card-footer { margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+        .co2-value { font-size:1.1rem; font-weight:700; }
+        .co2-value.high { color:var(--red); }
+        .co2-value.med { color:var(--orange); }
+        .co2-value.low { color:var(--accent-light); }
+        .co2-label { font-size:0.75rem; color:var(--text-muted); }
+        .swaps { font-size:0.82rem; color:var(--accent); font-weight:600; padding:0.3rem 0.75rem; background:var(--accent-bg); border-radius:20px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="brand"><span class="brand-icon">🌿</span><span class="brand-name">Eco-Nudge</span></div>
+        <div class="nav-links">
+            <a href="#" class="nav-link active">Meal Planner</a>
+            <a href="#" class="nav-link">AI Assistant</a>
+            <a href="#" class="nav-link">My Recipes</a>
+            <a href="#" class="nav-link">My Impact</a>
+            <a href="#" class="nav-link">Settings</a>
+        </div>
+        <span class="streak">🔥 3 day streak</span>
+    </nav>
+    <main>
+        <div class="hero">
+            <h1>Plan Better Meals</h1>
+            <p class="subtitle">Discover the environmental impact of your cooking and find greener alternatives.</p>
+        </div>
+
+        <!-- ★ ANALYZE — FIRST (centered) ★ -->
+        <div class="analyze-hero">
+            <h2>Analyze Your Recipe</h2>
+            <div class="form-row">
+                <div class="form-group"><label>Recipe Name</label><input type="text" placeholder="e.g., Spaghetti Carbonara"></div>
+                <div class="form-group" style="max-width:100px;"><label>Servings</label><input type="number" value="4"></div>
+            </div>
+            <div class="form-group"><label>Ingredients</label><textarea rows="3" placeholder="500g beef&#10;400g tomatoes&#10;200g pasta&#10;50g cheese"></textarea></div>
+            <button class="btn btn-primary">🔍 Analyze Recipe</button>
+        </div>
+
+        <!-- RECIPE GRID -->
+        <p class="section-label">Browse curated recipes</p>
+        <div class="recipe-grid">
+            <div class="recipe-card">
+                <div class="card-img"><img src="https://images.unsplash.com/photo-1622973536968-3ead9e780960?w=700&h=400&fit=crop" alt=""></div>
+                <div class="card-body">
+                    <h3>Classic Beef Bolognese</h3>
+                    <div class="card-meta"><span>🍽️ 4 servings</span><span>⏱️ 45 min</span><span>🌍 Italian</span></div>
+                    <div class="card-ingredients"><span class="hl">beef</span>, tomatoes, onions, garlic, olive oil, pasta, <span class="hl">cheese</span></div>
+                    <div class="card-footer">
+                        <div><span class="co2-value high">4.02</span><span class="co2-label"> kg CO₂e/srv</span></div>
+                        <span class="swaps">2 swaps</span>
+                    </div>
+                </div>
+            </div>
+            <div class="recipe-card">
+                <div class="card-img"><img src="https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=700&h=400&fit=crop" alt=""></div>
+                <div class="card-body">
+                    <h3>Chicken Stir-Fry</h3>
+                    <div class="card-meta"><span>🍽️ 3 servings</span><span>⏱️ 25 min</span><span>🌍 Asian</span></div>
+                    <div class="card-ingredients"><span class="hl">chicken</span>, rice, broccoli, peppers, soy sauce</div>
+                    <div class="card-footer">
+                        <div><span class="co2-value med">1.35</span><span class="co2-label"> kg CO₂e/srv</span></div>
+                        <span class="swaps">2 swaps</span>
+                    </div>
+                </div>
+            </div>
+            <div class="recipe-card">
+                <div class="card-img"><img src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=700&h=400&fit=crop" alt=""></div>
+                <div class="card-body">
+                    <h3>Lamb Curry</h3>
+                    <div class="card-meta"><span>🍽️ 4 servings</span><span>⏱️ 60 min</span><span>🌍 Indian</span></div>
+                    <div class="card-ingredients"><span class="hl">lamb</span>, onions, tomatoes, garlic, <span class="hl">cream</span>, rice</div>
+                    <div class="card-footer">
+                        <div><span class="co2-value high">3.72</span><span class="co2-label"> kg CO₂e/srv</span></div>
+                        <span class="swaps">3 swaps</span>
+                    </div>
+                </div>
+            </div>
+            <div class="recipe-card">
+                <div class="card-img"><img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=700&h=400&fit=crop" alt=""></div>
+                <div class="card-body">
+                    <h3>Salmon with Buttered Vegetables</h3>
+                    <div class="card-meta"><span>🍽️ 2 servings</span><span>⏱️ 35 min</span><span>🌍 European</span></div>
+                    <div class="card-ingredients"><span class="hl">salmon</span>, <span class="hl">butter</span>, potatoes, broccoli, lemon</div>
+                    <div class="card-footer">
+                        <div><span class="co2-value med">2.01</span><span class="co2-label"> kg CO₂e/srv</span></div>
+                        <span class="swaps">2 swaps</span>
+                    </div>
+                </div>
+            </div>
+            <div class="recipe-card">
+                <div class="card-img"><img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=700&h=400&fit=crop" alt=""></div>
+                <div class="card-body">
+                    <h3>Bacon Cheeseburger</h3>
+                    <div class="card-meta"><span>🍽️ 4 servings</span><span>⏱️ 20 min</span><span>🌍 American</span></div>
+                    <div class="card-ingredients"><span class="hl">beef</span>, <span class="hl">bacon</span>, <span class="hl">cheese</span>, bread, lettuce</div>
+                    <div class="card-footer">
+                        <div><span class="co2-value high">4.34</span><span class="co2-label"> kg CO₂e/srv</span></div>
+                        <span class="swaps">3 swaps</span>
+                    </div>
+                </div>
+            </div>
+            <div class="recipe-card">
+                <div class="card-img"><img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?w=700&h=400&fit=crop" alt=""></div>
+                <div class="card-body">
+                    <h3>Vegetable Lentil Soup</h3>
+                    <div class="card-meta"><span>🍽️ 4 servings</span><span>⏱️ 40 min</span><span>🌍 Mediterranean</span></div>
+                    <div class="card-ingredients">lentils, carrots, onions, celery, tomatoes, spinach</div>
+                    <div class="card-footer">
+                        <div><span class="co2-value low">0.21</span><span class="co2-label"> kg CO₂e/srv</span></div>
+                        <span class="swaps" style="background:rgba(82,183,136,0.1); color:#52b788;">Eco-friendly!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
