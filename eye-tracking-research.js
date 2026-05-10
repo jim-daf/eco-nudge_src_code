@@ -21,8 +21,8 @@ const EyeTrackingResearch = (() => {
     // ===== Configuration =====
     const CONFIG = {
         // Fixation detection (I-DT: Identification by Dispersion Threshold)
-        fixationDispersionThreshold: 50,   // pixels — max spread to count as fixation
-        fixationDurationThreshold: 100,    // ms — minimum duration for a fixation
+        fixationDispersionThreshold: 50,   // pixels - max spread to count as fixation
+        fixationDurationThreshold: 100,    // ms - minimum duration for a fixation
         // Sampling
         gazeBufferSize: 100000,            // max raw samples stored in memory
         // Heatmap
@@ -34,10 +34,10 @@ const EyeTrackingResearch = (() => {
         calibrationClicksPerPoint: 5,     // clicks required per point
         calibrationRounds: 1,             // how many passes through all points
         calibrationDwellTime: 800,        // ms user must look at dot before click counts
-        validationThreshold: 100,          // px — max acceptable validation error
+        validationThreshold: 100,          // px - max acceptable validation error
         // Gaze smoothing
         gazeSmoothingAlpha: 0.3,           // EMA factor (0=max smooth, 1=no smooth)
-        gazeOutlierThreshold: 300,         // px — jump beyond this from average is rejected
+        gazeOutlierThreshold: 300,         // px - jump beyond this from average is rejected
     };
 
     // ===== State =====
@@ -84,7 +84,7 @@ const EyeTrackingResearch = (() => {
         smoothX: null,
         smoothY: null,
 
-        // Local artifact cache — every generated file (CSV/JSON/PNG/webm) is
+        // Local artifact cache - every generated file (CSV/JSON/PNG/webm) is
         // stashed here BEFORE upload, so the user can save them locally even
         // if the Azure upload fails. Cleared at the start of each tracking run.
         localArtifacts: [],
@@ -267,7 +267,7 @@ const EyeTrackingResearch = (() => {
             }
         };
 
-        // Keep storingPoints off — it stores mouse move positions which corrupt the gaze model
+        // Keep storingPoints off - it stores mouse move positions which corrupt the gaze model
         webgazer.params.storingPoints = false;
 
         // Step 1: Start WebGazer
@@ -305,7 +305,7 @@ const EyeTrackingResearch = (() => {
                 const positions = tracker ? tracker.getPositions() : null;
                 if (positions && positions.length > 0) {
                     faceReady = true;
-                    console.log('Face detected — tracker has', positions.length, 'landmarks.');
+                    console.log('Face detected - tracker has', positions.length, 'landmarks.');
                 }
             } catch (e) { /* still loading */ }
             if (!faceReady) await sleep(300);
@@ -387,7 +387,7 @@ const EyeTrackingResearch = (() => {
             let clickCount = 0;
             let dwellReady = false;
 
-            // Start dwell timer — dot shrinks, click only counts after dwell completes
+            // Start dwell timer - dot shrinks, click only counts after dwell completes
             dot.classList.add('et-cal-dot-dwell');
             const dwellTimer = setTimeout(() => {
                 dwellReady = true;
@@ -508,7 +508,7 @@ const EyeTrackingResearch = (() => {
             resultHTML = `
                 <div class="et-cal-result ${avgError < CONFIG.validationThreshold ? 'et-cal-good' : 'et-cal-poor'}">
                     <p>Average accuracy: <strong>${avgError.toFixed(1)} px</strong></p>
-                    <p>${avgError < CONFIG.validationThreshold ? '✅ Good accuracy — ready to track!' : '⚠️ Consider recalibrating for better results.'}</p>
+                    <p>${avgError < CONFIG.validationThreshold ? '✅ Good accuracy - ready to track!' : '⚠️ Consider recalibrating for better results.'}</p>
                 </div>`;
         } else {
             avgError = null;
@@ -1009,7 +1009,7 @@ const EyeTrackingResearch = (() => {
                     showNotification(`Uploaded: ${filename}`, 'success');
                 } catch (e) {
                     console.error('[EyeTracking] Heatmap upload failed:', e);
-                    showNotification(`Heatmap upload failed — saved locally. Use "Download All Locally" to retrieve.`, 'error');
+                    showNotification(`Heatmap upload failed - saved locally. Use "Download All Locally" to retrieve.`, 'error');
                 }
                 resolve();
             }, 'image/png');
@@ -1279,7 +1279,7 @@ const EyeTrackingResearch = (() => {
             showNotification(`Uploaded: ${data.filename} (${(data.size / 1024 / 1024).toFixed(1)} MB)`, 'success');
         } catch (e) {
             console.error('[EyeTracking] Upload failed:', e);
-            showNotification(`Upload failed for ${filename} — saved locally. Use "Download All Locally" to retrieve.`, 'error');
+            showNotification(`Upload failed for ${filename} - saved locally. Use "Download All Locally" to retrieve.`, 'error');
         }
     }
 
@@ -1431,7 +1431,7 @@ const EyeTrackingResearch = (() => {
             showNotification(`Uploaded: ${filename}`, 'success');
         } catch (e) {
             console.error('[EyeTracking] CSV upload failed:', e);
-            showNotification(`Upload failed for ${filename} — saved locally. Use "Download All Locally" to retrieve.`, 'error');
+            showNotification(`Upload failed for ${filename} - saved locally. Use "Download All Locally" to retrieve.`, 'error');
         }
     }
 
@@ -1465,7 +1465,7 @@ const EyeTrackingResearch = (() => {
             showNotification(`Uploaded: ${filename}`, 'success');
         } catch (e) {
             console.error('[EyeTracking] JSON upload failed:', e);
-            showNotification(`Upload failed for ${filename} — saved locally. Use "Download All Locally" to retrieve.`, 'error');
+            showNotification(`Upload failed for ${filename} - saved locally. Use "Download All Locally" to retrieve.`, 'error');
         }
     }
 
@@ -1605,11 +1605,11 @@ const EyeTrackingResearch = (() => {
                             <div class="et-metric-label">Saccades</div>
                         </div>
                         <div class="et-metric">
-                            <div class="et-metric-value" id="etMetricPupil">—</div>
+                            <div class="et-metric-value" id="etMetricPupil">-</div>
                             <div class="et-metric-label">Pupil D</div>
                         </div>
                         <div class="et-metric">
-                            <div class="et-metric-value" id="etMetricCalAcc">—</div>
+                            <div class="et-metric-value" id="etMetricCalAcc">-</div>
                             <div class="et-metric-label">Cal Acc (px)</div>
                         </div>
                     </div>
@@ -1815,10 +1815,10 @@ const EyeTrackingResearch = (() => {
             const recentPupil = state.gazeData.slice(-50).filter(d => d.pupilD);
             pupil.textContent = recentPupil.length > 0
                 ? (recentPupil.reduce((s, d) => s + d.pupilD, 0) / recentPupil.length).toFixed(2)
-                : '—';
+                : '-';
         }
         if (calAcc) {
-            calAcc.textContent = state.calibrationAccuracy ? state.calibrationAccuracy.toFixed(1) : '—';
+            calAcc.textContent = state.calibrationAccuracy ? state.calibrationAccuracy.toFixed(1) : '-';
         }
     }
 

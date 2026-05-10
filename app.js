@@ -22,7 +22,8 @@ const App = (() => {
             model: 'gpt-4o',
             aiConnected: false,
             nudgeIntensity: 3,
-            nudgeMode: 'proactive', // 'proactive' or 'reactive' — research IV (Nudge Delivery Mode)
+            nudgeMode: 'proactive', // 'proactive' or 'reactive' - research IV (Nudge Delivery Mode)
+            proactivenessLevel: 'medium', // 'low' | 'medium' | 'high' - sprint-2 proactiveness dial (only meaningful when nudgeMode === 'proactive')
             focusAreas: { carbon: true, health: true, cost: false },
             dietaryRestrictions: [],
             excludedFoods: [],
@@ -88,6 +89,44 @@ const App = (() => {
         return state.nudgeMode === 'reactive';
     }
 
+    // ===== Proactiveness Level (Sprint 2) =====
+    // Sprint-1 evidence: a single "always-on Pro" mode produced 8/14 distraction
+    // complaints, RTLX 46, SUS 62 and a +275 s time gap. Sprint-2 splits Pro into
+    // three opt-in stops so each user picks how much help they want:
+    //   LOW    - 1 inline cue, 1-2 toasts, 1-2 AI bubbles, batched summary on save.
+    //   MEDIUM - all med+high cues, pinned suggestion panel, 3-4 toasts/AI bubbles, no modal.
+    //   HIGH   - sprint-1 Pro: modal pop-ups, impact strip, per-swap toasts.
+    // Caller convention: levelAtLeast('medium') means "this fires at MEDIUM or HIGH".
+    const LEVEL_ORDER = { low: 1, medium: 2, high: 3 };
+    function getProactivenessLevel() {
+        return state.proactivenessLevel || 'medium';
+    }
+    function levelAtLeast(level) {
+        if (!isProactive()) return false;
+        return LEVEL_ORDER[getProactivenessLevel()] >= LEVEL_ORDER[level];
+    }
+    function isLevel(level) {
+        return isProactive() && getProactivenessLevel() === level;
+    }
+
+    // Per-session counters so LOW/MEDIUM can cap chatter at the levels the sketch promises.
+    // Not persisted - reset on every page load.
+    const _sessionLimits = { aiBubbles: 0, tipToasts: 0, milestonesShown: 0 };
+    function aiBubbleBudgetExhausted() {
+        if (!isProactive()) return true;
+        const level = getProactivenessLevel();
+        if (level === 'high') return false;
+        const cap = level === 'low' ? 2 : 4;
+        return _sessionLimits.aiBubbles >= cap;
+    }
+    function tipToastBudgetExhausted() {
+        if (!isProactive()) return true;
+        const level = getProactivenessLevel();
+        if (level === 'high') return false;
+        const cap = level === 'low' ? 2 : 4;
+        return _sessionLimits.tipToasts >= cap;
+    }
+
 
 
     // ===== Initialization =====
@@ -118,7 +157,7 @@ const App = (() => {
                 onLoginSuccess(data.user);
             })
             .catch(() => {
-                // Session invalid/expired — clear and show login
+                // Session invalid/expired - clear and show login
                 localStorage.removeItem('econudge_user');
                 localStorage.removeItem('econudge_session_token');
                 showLoginScreen();
@@ -269,16 +308,18 @@ const App = (() => {
         // Show researcher indicator if condition is set via URL
         showResearcherIndicator();
 
-        // Proactive welcome nudge — surface a meaningful hook right after login.
-        if (isProactive()) {
+        // Proactive welcome nudge - surface a meaningful hook right after login.
+        // Skip on LOW (reserves the tip-toast budget for in-context moments); fires on MEDIUM+ only.
+        if (levelAtLeast('medium')) {
             setTimeout(() => {
                 const name = user.display_name || user.username;
                 const saved = state.impact.totalCO2Saved || 0;
                 if (saved > 0) {
-                    showToast(`👋 Welcome back, ${name}! You've saved ${saved.toFixed(2)} kg CO\u2082e so far — let's keep the streak going.`, 'info');
+                    showToast(`👋 Welcome back, ${name}! You've saved ${saved.toFixed(2)} kg CO\u2082e so far - let's keep the streak going.`, 'info');
                 } else {
                     showToast(`👋 Welcome, ${name}! Pick a recipe and I'll point out the high-impact ingredients for you.`, 'info');
                 }
+                _sessionLimits.tipToasts++;
             }, 600);
         }
     }
@@ -463,6 +504,10 @@ const App = (() => {
     // Throttled per-view so participants aren't spammed if they bounce between tabs.
     const _proactiveViewNudgeTimes = {};
     function triggerProactiveViewNudge(viewName) {
+        // LOW level keeps view changes silent - view-entry nudges are background chatter
+        // that the sketch reserves for MEDIUM+ (LOW's budget is spent on in-recipe cues).
+        if (isLevel('low')) return;
+        if (tipToastBudgetExhausted()) return;
         const now = Date.now();
         const last = _proactiveViewNudgeTimes[viewName] || 0;
         if (now - last < 30000) return; // 30s cool-down per view
@@ -473,10 +518,11 @@ const App = (() => {
             const swaps = state.impact.swapsMade || 0;
             const streak = state.impact.streak || 0;
             setTimeout(() => {
+                _sessionLimits.tipToasts++;
                 if (swaps === 0) {
-                    showToast(`📊 No eco-swaps yet — open any recipe and try the green swap suggestions to start your impact log.`, 'info');
+                    showToast(`📊 No eco-swaps yet - open any recipe and try the green swap suggestions to start your impact log.`, 'info');
                 } else if (streak >= 3) {
-                    showToast(`🔥 ${streak}-day streak! You've cut ${saved.toFixed(2)} kg CO\u2082e — keep it rolling today.`, 'success');
+                    showToast(`🔥 ${streak}-day streak! You've cut ${saved.toFixed(2)} kg CO\u2082e - keep it rolling today.`, 'success');
                 } else {
                     showToast(`🌱 ${swaps} swap${swaps === 1 ? '' : 's'} so far, saving ${saved.toFixed(2)} kg CO\u2082e. One more today bumps your streak!`, 'info');
                 }
@@ -491,7 +537,8 @@ const App = (() => {
                 });
                 if (highImpact.length > 0) {
                     const name = highImpact[0].name;
-                    showToast(`💡 "${name}" is one of your higher-carbon saves — open it and I'll suggest swaps.`, 'warning');
+                    _sessionLimits.tipToasts++;
+                    showToast(`💡 "${name}" is one of your higher-carbon saves - open it and I'll suggest swaps.`, 'warning');
                 }
             }, 400);
         } else if (viewName === 'recipes') {
@@ -499,7 +546,8 @@ const App = (() => {
             if (_proactiveViewNudgeTimes['__recipesGreeted']) return;
             _proactiveViewNudgeTimes['__recipesGreeted'] = now;
             setTimeout(() => {
-                showToast(`🌍 Tip: cards with a red glow are above-average impact — great candidates for swaps.`, 'info');
+                _sessionLimits.tipToasts++;
+                showToast(`🌍 Tip: cards with a red glow are above-average impact - great candidates for swaps.`, 'info');
             }, 1200);
         }
     }
@@ -591,6 +639,11 @@ const App = (() => {
         });
         document.getElementById('saveApiKeyBtn')?.addEventListener('click', saveApiKey);
         document.getElementById('clearDataBtn')?.addEventListener('click', clearAllData);
+
+        // Proactiveness-level dial (sprint 2): three buttons act as a single radio group.
+        document.querySelectorAll('#proactivenessLevelCard .level-option').forEach(btn => {
+            btn.addEventListener('click', () => setProactivenessLevel(btn.dataset.level));
+        });
 
         // Load settings into form
         loadSettingsToForm();
@@ -755,33 +808,107 @@ const App = (() => {
             const totalCO2 = EcoData.calculateRecipeCO2(recipe.ingredients);
             const perServing = totalCO2 / recipe.servings;
 
-            // Proactive toast for high-impact recipes
-            if (perServing >= 2) {
+            // Proactive toast for high-impact recipes - fires at every level but counts
+            // against LOW/MEDIUM's session budget so it can't fire repeatedly.
+            if (perServing >= 2 && !tipToastBudgetExhausted()) {
                 setTimeout(() => {
-                    showToast(`🌍 This recipe produces ${totalCO2.toFixed(1)} kg CO₂e — that's ${perServing.toFixed(1)} kg/serving. Check the eco-suggestions panel!`, 'warning');
+                    _sessionLimits.tipToasts++;
+                    showToast(`🌍 This recipe produces ${totalCO2.toFixed(1)} kg CO₂e - that's ${perServing.toFixed(1)} kg/serving. Check the eco-suggestions panel!`, 'warning');
                 }, 800);
             }
 
-            // Proactive chat message — AI initiates conversation about this recipe  
+            // Proactive chat message - AI initiates conversation about this recipe.
+            // Counts against the AI-bubble budget for LOW/MEDIUM (HIGH is uncapped).
             const highImpactIngredients = recipe.ingredients
                 .filter(i => (EcoData.carbonFootprint[i.name.toLowerCase()] || 1) >= 10)
                 .map(i => i.name);
 
-            if (highImpactIngredients.length > 0) {
+            if (highImpactIngredients.length > 0 && !aiBubbleBudgetExhausted()) {
                 setTimeout(() => {
-                    const proactiveMsg = `I notice this recipe uses **${highImpactIngredients.join(', ')}** — ${highImpactIngredients.length > 1 ? 'these are' : 'that\'s'} among the highest-carbon ingredients. Want me to suggest some lower-impact alternatives that still taste great?`;
+                    _sessionLimits.aiBubbles++;
+                    const proactiveMsg = `I notice this recipe uses **${highImpactIngredients.join(', ')}** - ${highImpactIngredients.length > 1 ? 'these are' : 'that\'s'} among the highest-carbon ingredients. Want me to suggest some lower-impact alternatives that still taste great?`;
                     appendChatMessage('mainChatMessages', 'assistant', proactiveMsg);
                     state.chatHistory.push({ role: 'assistant', content: proactiveMsg });
-                    // Auto-open the chat popup to draw attention (stays open for participant to engage)
-                    const popup = document.getElementById('chatbotPopup');
-                    const fab = document.getElementById('chatbotFab');
-                    if (popup && !popup.classList.contains('open')) {
-                        popup.classList.add('open');
-                        fab.classList.add('open');
+                    // Auto-open the chat popup only at MEDIUM+. LOW posts the message but
+                    // lets the user choose to open the chat (matches the sketch's "calm" promise).
+                    if (levelAtLeast('medium')) {
+                        const popup = document.getElementById('chatbotPopup');
+                        const fab = document.getElementById('chatbotFab');
+                        if (popup && !popup.classList.contains('open')) {
+                            popup.classList.add('open');
+                            fab.classList.add('open');
+                        }
                     }
                 }, 1500);
             }
+
+            // HIGH-only modal swap pop-up (sprint-1 Pro). Fires once per recipe load when
+            // there's a high-impact ingredient with a known swap; matches sketch 4's red modal.
+            if (isLevel('high') && highImpactIngredients.length > 0) {
+                setTimeout(() => maybeShowHighSwapModal(recipe), 2200);
+            }
         }
+    }
+
+    // ===== HIGH-level modal swap pop-up =====
+    // Sprint-1 "Try this swap!" modal - only shown when the user explicitly picked HIGH.
+    // Sketch 4 (sprint2-proactiveness-levels.html) marks this as the surface that caused
+    // the +275 s time gap and 8/14 distraction complaints, so it must remain opt-in.
+    function maybeShowHighSwapModal(recipe) {
+        if (!isLevel('high')) return;
+        if (!state.currentRecipe || state.currentRecipe !== recipe) return;
+        const excluded = getExcludedFoods();
+        const candidates = EcoData.findSubstitutableIngredients(recipe.ingredients)
+            .map(sub => ({
+                ...sub,
+                alternatives: sub.alternatives.filter(alt => !excluded.has(alt.replacement.toLowerCase()))
+            }))
+            .filter(sub => sub.alternatives.length > 0);
+        if (candidates.length === 0) return;
+        // Pick the swap with the largest savings to feature.
+        let best = null;
+        candidates.forEach(sub => {
+            sub.alternatives.forEach(alt => {
+                const s = EcoData.calculateSavings(sub.ingredient, alt.replacement, sub.amount / 1000);
+                if (!best || s.savingsKg > best.savingsKg) {
+                    best = { original: sub.ingredient, replacement: alt.replacement, amount: sub.amount, savingsKg: s.savingsKg };
+                }
+            });
+        });
+        if (!best || best.savingsKg <= 0) return;
+
+        const overlay = document.getElementById('modalOverlay');
+        const content = document.getElementById('modalContent');
+        if (!overlay || !content) return;
+        const equivKm = (best.savingsKg * 4.6).toFixed(0); // ~kg CO2 per km driven
+        content.innerHTML = `
+            <div class="high-swap-modal">
+                <div class="high-swap-modal-header">⚡ Try this swap!</div>
+                <div class="high-swap-modal-body">
+                    <p><strong>${capitalize(best.replacement)}</strong> for <strong>${capitalize(best.original)}</strong></p>
+                    <p class="high-swap-modal-save">save ${best.savingsKg.toFixed(1)} kg CO₂ ≈ ${equivKm} km of driving 🚗</p>
+                </div>
+                <div class="high-swap-modal-actions">
+                    <button class="btn btn-primary" id="highSwapApplyBtn">Apply</button>
+                    <button class="btn btn-outline" id="highSwapSkipBtn">Skip</button>
+                    <button class="btn btn-outline" id="highSwapLaterBtn">Maybe later</button>
+                </div>
+            </div>
+        `;
+        overlay.classList.add('active');
+        const close = () => overlay.classList.remove('active');
+        document.getElementById('highSwapApplyBtn').onclick = () => {
+            close();
+            // Find the matching inline-swap button and click it so the swap goes through
+            // the normal acceptSuggestion pipeline (impact tracking, toasts, undo state).
+            const list = document.getElementById('ingredientList');
+            if (list) {
+                const target = list.querySelector(`.inline-swap-option[data-replacement="${best.replacement}"][data-ingredient="${best.original}"] .btn-accept`);
+                if (target) target.click();
+            }
+        };
+        document.getElementById('highSwapSkipBtn').onclick = close;
+        document.getElementById('highSwapLaterBtn').onclick = close;
     }
 
     function showRecipeNavLink(name) {
@@ -838,16 +965,21 @@ const App = (() => {
         if (existingBanner) existingBanner.remove();
 
         if (isProactive()) {
+            // All proactive levels get the calm color-coding on the card itself…
             if (perServing >= 3) {
                 carbonCard.classList.add('carbon-warning');
-                const banner = document.createElement('div');
-                banner.className = 'carbon-warning-banner';
-                banner.innerHTML = `⚠️ High-impact recipe — ${perServing.toFixed(1)} kg CO₂e/serving is above average. Check the eco-suggestions!`;
-                carbonCard.appendChild(banner);
             } else if (perServing >= 1.5) {
                 carbonCard.classList.add('carbon-caution');
             } else {
                 carbonCard.classList.add('carbon-good');
+            }
+            // …but only MEDIUM+ adds the bright "high-impact" warning banner. Sketch 2 (LOW)
+            // shows just a faint side stripe + a corner pill, no banner.
+            if (perServing >= 3 && levelAtLeast('medium')) {
+                const banner = document.createElement('div');
+                banner.className = 'carbon-warning-banner';
+                banner.innerHTML = `⚠️ High-impact recipe - ${perServing.toFixed(1)} kg CO₂e/serving is above average. Check the eco-suggestions!`;
+                carbonCard.appendChild(banner);
             }
         }
 
@@ -882,12 +1014,29 @@ const App = (() => {
             subMap[sub.ingredient.toLowerCase()] = sub;
         });
 
+        // LOW only flags the single highest-carbon ingredient (sketch 2 - "1 swap idea").
+        // The .ingredient-row impact class is what drives the red/amber side stripe; we
+        // suppress it on everything except the top item when the user is on LOW.
+        let topImpactIngredientName = null;
+        if (isLevel('low')) {
+            let maxCO2 = -Infinity;
+            ingredients.forEach(ing => {
+                const perKg = EcoData.carbonFootprint[ing.name.toLowerCase()] || 1.0;
+                if (perKg > maxCO2) { maxCO2 = perKg; topImpactIngredientName = ing.name.toLowerCase(); }
+            });
+        }
+
         ingredients.forEach(ing => {
             const co2PerKg = EcoData.carbonFootprint[ing.name.toLowerCase()] || 1.0;
             const co2 = co2PerKg * (ing.amount / 1000);
             let impactClass = 'low-impact';
             if (co2PerKg >= 10) impactClass = 'high-impact';
             else if (co2PerKg >= 4) impactClass = 'medium-impact';
+
+            // LOW: strip the highlight from everything except the one top item.
+            if (isLevel('low') && ing.name.toLowerCase() !== topImpactIngredientName) {
+                impactClass = 'low-impact';
+            }
 
             const sub = subMap[ing.name.toLowerCase()];
 
@@ -910,11 +1059,10 @@ const App = (() => {
                         </div>`;
                 }).join('');
 
-                // Proactive: auto-expand the swap dropdown for high-impact
-                // ingredients so the participant sees alternatives immediately
-                // without having to click. Reactive mode keeps everything
-                // collapsed (user must seek out info).
-                const autoExpand = isProactive() && impactClass === 'high-impact';
+                // Proactive: auto-expand the swap dropdown for high-impact ingredients
+                // so the participant sees alternatives immediately. Sketch reserves auto-
+                // expand for MEDIUM+ - LOW keeps the row compact (user must seek out info).
+                const autoExpand = levelAtLeast('medium') && impactClass === 'high-impact';
                 const dropdownClass = autoExpand ? 'inline-swap-dropdown' : 'inline-swap-dropdown collapsed';
                 const ariaExpanded = autoExpand ? 'true' : 'false';
                 const arrow = autoExpand ? '▴' : '▾';
@@ -1030,14 +1178,16 @@ const App = (() => {
         showToast(`Swapped ${originalIngredient} → ${replacement}! Saving ${savings.savingsKg.toFixed(2)} kg CO₂`, 'success');
 
         // ===== Proactive: celebrate, contextualize, and prompt next action =====
-        if (isProactive()) {
+        // LOW gets only the confirmation toast above; the extras below are the MEDIUM+
+        // density that the cheatsheet (sketch 6) reserves for users who want more coaching.
+        if (levelAtLeast('medium')) {
             const totalSwaps = state.impact.swapsMade || 0;
             const totalSaved = state.impact.totalCO2Saved || 0;
 
             // Milestone celebrations at 1, 5, 10, 25 swaps.
             if ([1, 5, 10, 25].includes(totalSwaps)) {
                 setTimeout(() => {
-                    showToast(`🎉 Milestone! ${totalSwaps} eco-swap${totalSwaps === 1 ? '' : 's'} so far — that's ${totalSaved.toFixed(2)} kg CO\u2082e off your footprint.`, 'success');
+                    showToast(`🎉 Milestone! ${totalSwaps} eco-swap${totalSwaps === 1 ? '' : 's'} so far - that's ${totalSaved.toFixed(2)} kg CO\u2082e off your footprint.`, 'success');
                 }, 1100);
             }
 
@@ -1046,15 +1196,17 @@ const App = (() => {
                 const equivs = EcoData.getCO2Equivalence(savings.savingsKg);
                 if (equivs && equivs.length > 0) {
                     setTimeout(() => {
-                        showToast(`🌍 That single swap is ${equivs[0]} — nice one.`, 'info');
+                        showToast(`🌍 That single swap is ${equivs[0]} - nice one.`, 'info');
                     }, 1800);
                 }
             }
 
             // Follow-up chat nudge once per recipe: encourage stacking more swaps.
+            // Counts against the AI-bubble session cap (MEDIUM = 4, HIGH = unlimited).
             const remainingSwaps = document.querySelectorAll('.inline-swap-dropdown .inline-swap-option .btn-accept').length;
-            if (remainingSwaps > 0 && state.appliedSwaps.length === 1) {
+            if (remainingSwaps > 0 && state.appliedSwaps.length === 1 && !aiBubbleBudgetExhausted()) {
                 setTimeout(() => {
+                    _sessionLimits.aiBubbles++;
                     const followUp = `Nice swap! There ${remainingSwaps === 1 ? 'is' : 'are'} still **${remainingSwaps} more eco-swap${remainingSwaps === 1 ? '' : 's'}** available on this recipe. Want me to apply them all in one go?`;
                     appendChatMessage('mainChatMessages', 'assistant', followUp);
                     state.chatHistory.push({ role: 'assistant', content: followUp });
@@ -1366,14 +1518,16 @@ Only include swaps where the replacement is a real ingredient that works in this
         if (isProactive()) {
             if (perServing >= 3) {
                 carbonCard.classList.add('carbon-warning');
-                const banner = document.createElement('div');
-                banner.className = 'carbon-warning-banner';
-                banner.innerHTML = `⚠️ High-impact recipe — ${perServing.toFixed(1)} kg CO₂e/serving is above average. Check the eco-suggestions!`;
-                carbonCard.appendChild(banner);
             } else if (perServing >= 1.5) {
                 carbonCard.classList.add('carbon-caution');
             } else {
                 carbonCard.classList.add('carbon-good');
+            }
+            if (perServing >= 3 && levelAtLeast('medium')) {
+                const banner = document.createElement('div');
+                banner.className = 'carbon-warning-banner';
+                banner.innerHTML = `⚠️ High-impact recipe - ${perServing.toFixed(1)} kg CO₂e/serving is above average. Check the eco-suggestions!`;
+                carbonCard.appendChild(banner);
             }
         }
     }
@@ -1408,8 +1562,9 @@ Only include swaps where the replacement is a real ingredient that works in this
         renderImpactView();
         saveState();
 
-        // Proactive: prompt user to check impact page after making swaps
-        if (isProactive() && state.impact.swapsMade > 0 && state.impact.swapsMade % 3 === 0) {
+        // Proactive: prompt user to check impact page after making swaps.
+        // MEDIUM+ only - LOW reserves chatter for the batched on-save summary.
+        if (levelAtLeast('medium') && state.impact.swapsMade > 0 && state.impact.swapsMade % 3 === 0) {
             setTimeout(() => {
                 showToast(`🏆 You've made ${state.impact.swapsMade} swaps! Check your Impact page to see your total savings.`, 'info');
             }, 1500);
@@ -2010,6 +2165,8 @@ Rules:
         if (el('dietDairyFree')) el('dietDairyFree').checked = state.dietaryRestrictions.includes('dairy-free');
         if (el('dietNutFree')) el('dietNutFree').checked = state.dietaryRestrictions.includes('nut-free');
         renderExcludedFoodTagList();
+        // Sync the proactiveness-level dial (shown/hidden by nudge mode).
+        updateProactivenessLevelCardVisibility();
     }
 
     function saveApiKey() {
@@ -2332,7 +2489,7 @@ Rules:
             font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px;
             font-family: monospace; pointer-events: none; opacity: 0.9;
         `;
-        banner.textContent = `RESEARCH MODE — Condition: ${state.nudgeMode.toUpperCase()} — Eco-nudges are ${isProactive() ? 'PUSHED to user (auto-expand, alerts, proactive chat)' : 'PULL-only (collapsed, no alerts, passive chat)'}`;
+        banner.textContent = `RESEARCH MODE - Condition: ${state.nudgeMode.toUpperCase()} - Eco-nudges are ${isProactive() ? 'PUSHED to user (auto-expand, alerts, proactive chat)' : 'PULL-only (collapsed, no alerts, passive chat)'}`;
         document.body.appendChild(banner);
 
         // Push body content down so banner doesn't overlap nav
@@ -2346,12 +2503,59 @@ Rules:
         console.log('[Research] Nudge mode changed to:', mode);
         saveState();
         showResearcherIndicator();
+        updateProactivenessLevelCardVisibility();
         // Re-render views to apply the condition (recipe grid badges/glow,
         // saved-recipes view, and the open detail view if any).
         renderRecipeGrid();
         renderSavedRecipesView();
         if (state.currentRecipe) {
             renderDetailView();
+        }
+    }
+
+    // ===== Set Proactiveness Level (sprint 2 dial) =====
+    function setProactivenessLevel(level) {
+        if (!['low', 'medium', 'high'].includes(level)) return;
+        state.proactivenessLevel = level;
+        console.log('[Research] Proactiveness level changed to:', level);
+        saveState();
+        // Reset per-session caps so the new level can fire its appropriate cadence
+        // immediately on the next interaction.
+        _sessionLimits.aiBubbles = 0;
+        _sessionLimits.tipToasts = 0;
+        _sessionLimits.milestonesShown = 0;
+        renderProactivenessLevelCard();
+        renderRecipeGrid();
+        renderSavedRecipesView();
+        if (state.currentRecipe) {
+            renderDetailView();
+        }
+        showToast(`Eco-coaching level set to ${level.toUpperCase()}.`, 'info');
+    }
+
+    // Show the dial only when the user is in proactive mode (the dial controls
+    // *how much* proactive help to push; reactive mode means none of it fires).
+    function updateProactivenessLevelCardVisibility() {
+        const card = document.getElementById('proactivenessLevelCard');
+        if (!card) return;
+        card.style.display = isProactive() ? '' : 'none';
+        if (isProactive()) renderProactivenessLevelCard();
+    }
+
+    // Reflect the current level on the dial UI (active pill + description).
+    function renderProactivenessLevelCard() {
+        const level = getProactivenessLevel();
+        document.querySelectorAll('#proactivenessLevelCard .level-option').forEach(el => {
+            el.classList.toggle('active', el.dataset.level === level);
+        });
+        const desc = document.getElementById('proactivenessLevelDesc');
+        if (desc) {
+            const copy = {
+                low:    '🌱 LOW - 1 inline cue, 1-2 toasts, 1-2 AI bubbles, batched summary on save.',
+                medium: '🌿 MEDIUM - all med/high cues, pinned panel, 3-4 toasts, 3-4 AI bubbles, no modal.',
+                high:   '🔥 HIGH - full coaching: modal swap pop-ups, per-swap toasts, impact strip, animated streak.'
+            };
+            desc.textContent = copy[level] || '';
         }
     }
 
@@ -2370,6 +2574,8 @@ Rules:
         deleteSavedRecipe,
         getState: () => state,
         setNudgeMode,
+        setProactivenessLevel,
+        getProactivenessLevel,
     };
 })();
 

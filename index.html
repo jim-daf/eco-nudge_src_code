@@ -72,7 +72,7 @@
             <!-- Step 2: Dietary Restrictions -->
             <div class="onboarding-step" id="onboardingStep2">
                 <h3>🍽️ Any dietary preferences?</h3>
-                <p class="step-desc">Select any that apply — we'll tailor recipes and suggestions accordingly.</p>
+                <p class="step-desc">Select any that apply - we'll tailor recipes and suggestions accordingly.</p>
                 <div class="checkbox-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="obDietVegetarian"> 🥬 Vegetarian
@@ -407,6 +407,49 @@
             </div>
 
 
+
+            <!-- Proactiveness level dial - visible only while the researcher's Proactive
+                 toggle is on. Hidden in Reactive mode (no nudges = nothing to tune). -->
+            <div class="settings-card proactiveness-level-card" id="proactivenessLevelCard">
+                <h3>🎚️ Eco-coaching Level</h3>
+                <p>How much should Eco-Nudge speak up while you cook? Pick a level - change it any time.</p>
+                <div class="level-options" role="radiogroup" aria-label="Eco-coaching level">
+                    <button type="button" class="level-option level-low" data-level="low" role="radio">
+                        <span class="level-emoji">🌱</span>
+                        <span class="level-name">LOW</span>
+                        <span class="level-tag">"I'll explore on my own."</span>
+                        <ul class="level-bullets">
+                            <li>Inline highlight on top high-carbon ingredient</li>
+                            <li>1-2 AI assistant pop-ups per session</li>
+                            <li>1-2 tip-alert toasts</li>
+                            <li>Batched summary on Save</li>
+                        </ul>
+                    </button>
+                    <button type="button" class="level-option level-medium" data-level="medium" role="radio">
+                        <span class="level-emoji">🌿</span>
+                        <span class="level-name">MEDIUM</span>
+                        <span class="level-tag">"A little nudge here and there."</span>
+                        <ul class="level-bullets">
+                            <li>Highlights on all med + high ingredients</li>
+                            <li>Compact suggestions panel</li>
+                            <li>3-4 AI pop-ups & tip toasts per session</li>
+                            <li>Toast per accepted swap</li>
+                        </ul>
+                    </button>
+                    <button type="button" class="level-option level-high" data-level="high" role="radio">
+                        <span class="level-emoji">🔥</span>
+                        <span class="level-name">HIGH</span>
+                        <span class="level-tag">"Coach me - show everything."</span>
+                        <ul class="level-bullets">
+                            <li>Modal "Try this swap!" pop-up on every recipe</li>
+                            <li>Full suggestions panel</li>
+                            <li>Continuous AI tips + per-swap toasts</li>
+                            <li>Animated streak + impact stats strip</li>
+                        </ul>
+                    </button>
+                </div>
+                <p class="proactiveness-level-desc" id="proactivenessLevelDesc"></p>
+            </div>
 
             <div class="settings-card">
                 <h3>🎯 Nudge Preferences</h3>
